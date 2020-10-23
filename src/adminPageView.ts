@@ -1,9 +1,9 @@
-import {createElement} from "./htmlUtils"
+import {createElement, createImageInput} from "./htmlUtils"
 import LoginPageModel from "./LoginPageModel"
 import { login } from "./utils"
 
 
-export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance: LoginPageModel, loginHandler: string) => {
+export const renderAdminLoginPage = (rootElement: HTMLElement, loginPageModelInstance: LoginPageModel, loginHandler: string) => {
     const loginDiv: HTMLElement = createElement("div", "loginDiv")
     const loginForm: HTMLInputElement = createElement("input", "loginForm")
     const passwordForm: HTMLInputElement = createElement("input", "passwordForm")
@@ -18,15 +18,30 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
                 if(!passwordValue) {
                     alert("Please enter password")
                 } else {
-                    login(loginValue, passwordValue, loginPageModelInstance, loginHandler)
+                    login(loginValue, passwordValue, loginHandler, loginPageModelInstance)
                 }
             }
         } else {
-            login(loginValue, passwordValue, loginPageModelInstance, loginHandler)
+            login(loginValue, passwordValue, loginHandler, loginPageModelInstance)
         }
     })
     passwordForm.setAttribute("type", "password")
     loginButton.setAttribute("type", "submit")
     loginDiv.append(loginForm, passwordForm, loginButton)
     rootElement.append(loginDiv)
+}
+
+export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance: LoginPageModel) => {
+    rootElement.innerHTML = ""
+    const backgroundInput: HTMLElement = createImageInput(rootElement, "background")
+    const partsInput: HTMLElement = createImageInput(rootElement, "parts")
+    const fullInput: HTMLElement = createImageInput(rootElement, "full")
+    
+    const exitButton: HTMLElement = createElement("input", "exitButton")
+    exitButton.setAttribute("type", "button")
+    exitButton.innerText = "exit"
+    exitButton.addEventListener("click", () => {
+        loginPageModelInstance.setLoginStatus(false)
+    })
+    rootElement.append(backgroundInput, partsInput, fullInput, exitButton)
 }

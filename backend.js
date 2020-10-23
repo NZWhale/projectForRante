@@ -13,37 +13,40 @@ app.use(bodyParser.json())
 // uploading background images to the server
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "upload")
+        cb(null, "images")
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname)
+        cb(null, req.originalUrl + "_" + file.originalname)
     }
 })
 
 app.use(express.static(__dirname))
 
-app.use(multer({ storage: storageConfig }).single("filedata"))
-app.post("/upload", function(req, res, next) {
+app.use(multer({ storage: storageConfig }).array("images"))
+app.post("/images", function(req, res, next) {
 
-        let filedata = req.file
-        if (!filedata)
+        let images = req.files
+        if (!images)
             res.send("Uploading error")
         else
-            res.send("file uploaded")
+            res.status(200).send()
+        console.log("file uploaded")
     })
     // ---------------------------------------------
 
 // function to create an array of links to images
-function getImagesUrls(callback) {
+function getBackgroundUrls(callback) {
     const arr = []
-    fs.readdir("./upload", { withFileTypes: true }, (err, files) => {
+    fs.readdir("./images", { withFileTypes: true }, (err, files) => {
         if (err) {
             callback(err)
         } else {
             files.forEach(file => {
                 if (path.extname(file.name) === ".jpg") {
-                    const imgpath = "/upload/" + file.name
-                    arr.push(imgpath)
+                    const val = "background_"
+                    const fileName = file.name
+                    const imgpath = "/images/" + file.name
+                    if (fileName.startsWith(val)) { arr.push(imgpath) }
                 }
             })
             callback(null, arr)
@@ -51,9 +54,49 @@ function getImagesUrls(callback) {
     })
 }
 
+function getPartsUrls(callback) {
+    const arr = []
+    fs.readdir("./images", { withFileTypes: true }, (err, files) => {
+        if (err) {
+            callback(err)
+        } else {
+            files.forEach(file => {
+                if (path.extname(file.name) === ".jpg") {
+                    const val = "parts_"
+                    const fileName = file.name
+                    const imgpath = "/images/" + file.name
+                    if (fileName.startsWith(val)) { arr.push(imgpath) }
+                }
+            })
+            callback(null, arr)
+        }
+    })
+}
+
+function getFullUrls(callback) {
+    const arr = []
+    fs.readdir("./images", { withFileTypes: true }, (err, files) => {
+        if (err) {
+            callback(err)
+        } else {
+            files.forEach(file => {
+                if (path.extname(file.name) === ".jpg") {
+                    const val = "full_"
+                    const fileName = file.name
+                    const imgpath = "/images/" + file.name
+                    if (fileName.startsWith(val)) { arr.push(imgpath) }
+                }
+            })
+            callback(null, arr)
+        }
+    })
+}
+//--------------------------------------
+
+
 // get background images from the server
-app.get("/uploads", (req, res) => {
-        getImagesUrls((err, arr) => {
+app.get("/getbackground", (req, res) => {
+        getBackgroundUrls((err, arr) => {
             if (err) {
                 res.send("error")
             } else {
@@ -62,6 +105,32 @@ app.get("/uploads", (req, res) => {
         })
     })
     // ----------------------------------------
+
+// get parts images from the server
+app.get("/getpart", (req, res) => {
+        getPartsUrls((err, arr) => {
+            if (err) {
+                res.send("error")
+            } else {
+                res.send(JSON.stringify(arr))
+            }
+        })
+    })
+    // ----------------------------------------
+
+
+// get full images from the server
+app.get("/getfull", (req, res) => {
+        getFullUrls((err, arr) => {
+            if (err) {
+                res.send("error")
+            } else {
+                res.send(JSON.stringify(arr))
+            }
+        })
+    })
+    // ----------------------------------------
+
 
 // This are handlers for login and registation form
 
@@ -93,15 +162,15 @@ app.post('/login', (req, res) => {
     }
     const userFound = findUserByLogin(user.login)
     if (userFound && userFound.password === user.password) {
-        console.log("login successful")
         const cookieAge = 24 * 60 * 60 * 1000
         const authToken = generateAuthToken()
         authorisedUsers[authToken] = userFound.login
         res.cookie('auth-token', authToken, { maxAge: cookieAge, httpOnly: false })
+        console.log("login successful")
         res.status(200).send("login successful")
     } else {
         console.log("user not found")
-        res.status(401).send("user not found")
+        res.status(404).send("user not found")
     }
 })
 
@@ -113,7 +182,7 @@ app.post('/check-login', (req, res) => {
                 const user = findUserByLogin(userLogin)
                 res.status(200).send("already logged in")
             }
-            res.status(401)
+            res.status(401).send("user not found")
         }
     })
     // -------------------------------------------------
