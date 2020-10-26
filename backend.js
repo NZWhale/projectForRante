@@ -7,32 +7,31 @@ const app = express()
 const port = 3000
 const dataPath = "./data"
 const usersFilePath = "./data/users.json"
+const Busboy = require('busboy')
+    // const http = require('http')
 
 app.use(bodyParser.json())
 
-// uploading background images to the server
-const storageConfig = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "images")
-    },
-    filename: (req, file, cb) => {
-        cb(null, req.originalUrl + "_" + file.originalname)
-    }
-})
-
 app.use(express.static(__dirname))
 
-app.use(multer({ storage: storageConfig }).array("images"))
-app.post("/images", function(req, res, next) {
 
-        let images = req.files
-        if (!images)
-            res.send("Uploading error")
-        else
-            res.status(200).send()
-        console.log("file uploaded")
-    })
-    // ---------------------------------------------
+app.post('/fileupload', function(req, res) {
+    const busboy = new Busboy({ headers: req.headers });
+    busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+
+        const saveTo = path.join(__dirname, 'uploads/' + filename);
+        file.pipe(fs.createWriteStream(saveTo));
+    });
+
+    busboy.on('finish', function() {
+        res.writeHead(200, { 'Connection': 'close' });
+        res.end("That's all folks!");
+    });
+
+    return req.pipe(busboy);
+});
+
+
 
 // function to create an array of links to images
 function getBackgroundUrls(callback) {
@@ -61,7 +60,7 @@ function getPartsUrls(callback) {
             callback(err)
         } else {
             files.forEach(file => {
-                if (path.extname(file.name) === ".jpg") {
+                if (path.extname(file.name) === ".jpg" || path.extname(file.name) === ".png") {
                     const val = "parts_"
                     const fileName = file.name
                     const imgpath = "/images/" + file.name
@@ -131,6 +130,14 @@ app.get("/getfull", (req, res) => {
     })
     // ----------------------------------------
 
+app.get('/adminpanel', function(req, res) {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
+    res.write('<input type="file" name="filetoupload"><br>');
+    res.write('<input type="submit">');
+    res.write('</form>');
+    return res.end();
+})
 
 // This are handlers for login and registation form
 

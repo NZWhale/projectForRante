@@ -27,6 +27,7 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: path.join(__dirname, './index.html'), to: path.join(__dirname, './dist/index.html') },
+                { from: path.join(__dirname, '/src/style.css'), to: path.join(__dirname, './dist/style.css') }
             ],
         }),
     ],

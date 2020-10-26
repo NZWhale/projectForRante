@@ -1,4 +1,6 @@
-import {createElement, createImageInput} from "./htmlUtils"
+import { url } from "inspector"
+
+import {createElement,} from "./htmlUtils"
 import LoginPageModel from "./LoginPageModel"
 import { login } from "./utils"
 
@@ -29,19 +31,16 @@ export const renderAdminLoginPage = (rootElement: HTMLElement, loginPageModelIns
     loginButton.setAttribute("type", "submit")
     loginDiv.append(loginForm, passwordForm, loginButton)
     rootElement.append(loginDiv)
+
 }
 
 export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance: LoginPageModel) => {
     rootElement.innerHTML = ""
-    const backgroundInput: HTMLElement = createImageInput(rootElement, "background")
-    const partsInput: HTMLElement = createImageInput(rootElement, "parts")
-    const fullInput: HTMLElement = createImageInput(rootElement, "full")
-    
     const exitButton: HTMLElement = createElement("input", "exitButton")
     exitButton.setAttribute("type", "button")
     exitButton.innerText = "exit"
     exitButton.addEventListener("click", () => {
         loginPageModelInstance.setLoginStatus(false)
     })
-    rootElement.append(backgroundInput, partsInput, fullInput, exitButton)
 }
+
