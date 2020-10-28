@@ -1,3 +1,4 @@
+import { arrayOfParts } from "."
 import { renderAdminPage } from "./adminPageView"
 import LoginPageModel from "./LoginPageModel"
 
@@ -5,6 +6,7 @@ export const backgroundUrl: string = "http://127.0.0.1:3000/getbackground"
 export const partsUrl: string = "http://127.0.0.1:3000/getpart"
 export const fullUrl: string = "http://127.0.0.1:3000/getfull"
 export const loginHandler: string = "http://127.0.0.1:3000/login"
+export const backendCheckLoginUrl = "http://127.0.0.1:3000/check-login"
 
 // const rootElement: HTMLElement = document.getElementById("root")
 
@@ -21,7 +23,7 @@ export async function getImagesUrls(backgroundUrl: string): Promise<string[]> {
 }
 
 
-function fetchRequest(method: string, url: string, body: object = {}): Promise<any> {
+export function fetchRequest(method: string, url: string, body: object = {}): Promise<any> {
     const headers = {
         "Content-Type": "application/json"
     }
@@ -41,18 +43,30 @@ function fetchRequest(method: string, url: string, body: object = {}): Promise<a
 
 
 
-export const login = (login: string, password: string, loginHandler: string, loginPageModelInstance: LoginPageModel, rootElement: HTMLElement) => {
+export const login = (login: string, password: string, loginHandler: string, loginPageModelInstance: LoginPageModel, rootElement: HTMLElement, arrayOfParts: Array<any>) => {
     const user = {
         login: login,
         password: password
     }
     const loginPromise = fetchRequest("POST", loginHandler, user)
     loginPromise.then((response) => {
-        if(response.status === 200) {
+        if (response.status === 200) {
             loginPageModelInstance.setLoginStatus(true)
-            renderAdminPage(rootElement, loginPageModelInstance)
+            renderAdminPage(rootElement, loginPageModelInstance, arrayOfParts)
             return response
         }
     })
 }
 
+
+function searchByFullImg(array: Array<Array<string>>, item: string): Array<string> {
+    const result: Array<string> = []
+    array.filter(el => {
+        el.forEach(element => {
+            if (element.includes(item)) {
+                result.push(element)
+            }
+        });
+    })
+    return result
+}

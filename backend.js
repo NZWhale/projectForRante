@@ -1,5 +1,4 @@
 const express = require('express')
-const multer = require('multer')
 const fs = require('fs')
 const bodyParser = require('body-parser')
 const path = require('path')
@@ -8,10 +7,10 @@ const port = 3000
 const dataPath = "./data"
 const usersFilePath = "./data/users.json"
 const Busboy = require('busboy')
-    // const http = require('http')
+const cookieParser = require('cookie-parser')
 
 app.use(bodyParser.json())
-
+app.use(cookieParser())
 app.use(express.static(__dirname))
 
 //handlers for uploading images
@@ -62,36 +61,6 @@ app.post('/parts', function(req, res) {
 
     return req.pipe(busboy);
 });
-
-//admin panel
-// app.get('/adminpanel', function(req, res) {
-
-//         res.writeHead(200, { 'Content-Type': 'text/html' });
-//         //full images
-//         res.write('<div id="projectAndParts">')
-//         res.write('<h3>Select grafic project</h3>')
-//         res.write('<form action="full"  method="post" enctype="multipart/form-data">');
-//         res.write('<input type="file" id="full" name="full"><br>');
-//         res.write('<input type="submit">');
-//         res.write('</form>');
-//         //images parts
-//         res.write('<h3>Select parts of grafic project</h3>')
-//         res.write('<form action="parts" method="post" enctype="multipart/form-data">');
-//         res.write('<input type="file" id="parts" name="parts" multiple="true"><br>');
-//         res.write('<input type="submit">');
-//         res.write('</form>');
-//         res.write('</div>');
-//         //background images
-//         res.write('<div id="backgroundDiv">')
-//         res.write('<h3>Select background image</h3>')
-//         res.write('<form action="background" method="post" enctype="multipart/form-data">');
-//         res.write('<input type="file" id="background" name="background" multiple="true"><br>');
-//         res.write('<input type="submit">');
-//         res.write('</form>');
-//         res.write('</div>');
-//         return res.end();
-//     })
-//-----------------------------------
 
 // function to create an array of links to images
 function getBackgroundUrls(callback) {
@@ -234,11 +203,12 @@ app.post('/check-login', (req, res) => {
         if (req.cookies) {
             const authToken = req.cookies["auth-token"]
             const userLogin = authorisedUsers[authToken]
-            if (userLogin) {
-                const user = findUserByLogin(userLogin)
-                res.status(200).send("already logged in")
+            const user = findUserByLogin(userLogin)
+            if (user) {
+                res.status(200).send()
+            } else {
+                res.status(401).send()
             }
-            res.status(401).send("user not found")
         }
     })
     // -------------------------------------------------

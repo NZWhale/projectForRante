@@ -1,9 +1,6 @@
-import { createElement, createBackground, createAdminAccessButton } from "./htmlUtils"
-import LoginPageModel from "./LoginPageModel"
 import { renderMainPage } from "./mainPageView"
 import { backgroundUrl } from "./utils"
-export const loginHandler: string = "http://127.0.0.1:3000/login"
-
+export const arrayOfParts: Array<Array<string>> = []
 
 
 window.addEventListener("load", async () => {
