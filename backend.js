@@ -14,12 +14,12 @@ app.use(bodyParser.json())
 
 app.use(express.static(__dirname))
 
-
-app.post('/fileupload', function(req, res) {
+//handlers for uploading images
+app.post('/background', function(req, res) {
     const busboy = new Busboy({ headers: req.headers });
     busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
 
-        const saveTo = path.join(__dirname, 'uploads/' + filename);
+        const saveTo = path.join(__dirname, 'background/' + filename);
         file.pipe(fs.createWriteStream(saveTo));
     });
 
@@ -31,21 +31,80 @@ app.post('/fileupload', function(req, res) {
     return req.pipe(busboy);
 });
 
+app.post('/full', function(req, res) {
+    const busboy = new Busboy({ headers: req.headers });
+    busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
 
+        const saveTo = path.join(__dirname, 'full/' + filename);
+        file.pipe(fs.createWriteStream(saveTo));
+    });
+
+    busboy.on('finish', function() {
+        res.writeHead(200, { 'Connection': 'close' });
+        res.end("That's all folks!");
+    });
+
+    return req.pipe(busboy);
+});
+
+app.post('/parts', function(req, res) {
+    const busboy = new Busboy({ headers: req.headers });
+    busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+
+        const saveTo = path.join(__dirname, 'parts/' + filename);
+        file.pipe(fs.createWriteStream(saveTo));
+    });
+
+    busboy.on('finish', function() {
+        res.writeHead(200, { 'Connection': 'close' });
+        res.end("That's all folks!");
+    });
+
+    return req.pipe(busboy);
+});
+
+//admin panel
+// app.get('/adminpanel', function(req, res) {
+
+//         res.writeHead(200, { 'Content-Type': 'text/html' });
+//         //full images
+//         res.write('<div id="projectAndParts">')
+//         res.write('<h3>Select grafic project</h3>')
+//         res.write('<form action="full"  method="post" enctype="multipart/form-data">');
+//         res.write('<input type="file" id="full" name="full"><br>');
+//         res.write('<input type="submit">');
+//         res.write('</form>');
+//         //images parts
+//         res.write('<h3>Select parts of grafic project</h3>')
+//         res.write('<form action="parts" method="post" enctype="multipart/form-data">');
+//         res.write('<input type="file" id="parts" name="parts" multiple="true"><br>');
+//         res.write('<input type="submit">');
+//         res.write('</form>');
+//         res.write('</div>');
+//         //background images
+//         res.write('<div id="backgroundDiv">')
+//         res.write('<h3>Select background image</h3>')
+//         res.write('<form action="background" method="post" enctype="multipart/form-data">');
+//         res.write('<input type="file" id="background" name="background" multiple="true"><br>');
+//         res.write('<input type="submit">');
+//         res.write('</form>');
+//         res.write('</div>');
+//         return res.end();
+//     })
+//-----------------------------------
 
 // function to create an array of links to images
 function getBackgroundUrls(callback) {
     const arr = []
-    fs.readdir("./images", { withFileTypes: true }, (err, files) => {
+    fs.readdir("./background", { withFileTypes: true }, (err, files) => {
         if (err) {
             callback(err)
         } else {
             files.forEach(file => {
                 if (path.extname(file.name) === ".jpg") {
-                    const val = "background_"
                     const fileName = file.name
-                    const imgpath = "/images/" + file.name
-                    if (fileName.startsWith(val)) { arr.push(imgpath) }
+                    const imgpath = "/background/" + file.name
+                    if (fileName) { arr.push(imgpath) }
                 }
             })
             callback(null, arr)
@@ -55,16 +114,15 @@ function getBackgroundUrls(callback) {
 
 function getPartsUrls(callback) {
     const arr = []
-    fs.readdir("./images", { withFileTypes: true }, (err, files) => {
+    fs.readdir("./parts", { withFileTypes: true }, (err, files) => {
         if (err) {
             callback(err)
         } else {
             files.forEach(file => {
                 if (path.extname(file.name) === ".jpg" || path.extname(file.name) === ".png") {
-                    const val = "parts_"
                     const fileName = file.name
-                    const imgpath = "/images/" + file.name
-                    if (fileName.startsWith(val)) { arr.push(imgpath) }
+                    const imgpath = "/parts/" + file.name
+                    if (fileName) { arr.push(imgpath) }
                 }
             })
             callback(null, arr)
@@ -74,16 +132,15 @@ function getPartsUrls(callback) {
 
 function getFullUrls(callback) {
     const arr = []
-    fs.readdir("./images", { withFileTypes: true }, (err, files) => {
+    fs.readdir("./full", { withFileTypes: true }, (err, files) => {
         if (err) {
             callback(err)
         } else {
             files.forEach(file => {
                 if (path.extname(file.name) === ".jpg") {
-                    const val = "full_"
                     const fileName = file.name
-                    const imgpath = "/images/" + file.name
-                    if (fileName.startsWith(val)) { arr.push(imgpath) }
+                    const imgpath = "/full/" + file.name
+                    if (fileName) { arr.push(imgpath) }
                 }
             })
             callback(null, arr)
@@ -130,14 +187,6 @@ app.get("/getfull", (req, res) => {
     })
     // ----------------------------------------
 
-app.get('/adminpanel', function(req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
-    res.write('<input type="file" name="filetoupload"><br>');
-    res.write('<input type="submit">');
-    res.write('</form>');
-    return res.end();
-})
 
 // This are handlers for login and registation form
 

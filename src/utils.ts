@@ -6,7 +6,7 @@ export const partsUrl: string = "http://127.0.0.1:3000/getpart"
 export const fullUrl: string = "http://127.0.0.1:3000/getfull"
 export const loginHandler: string = "http://127.0.0.1:3000/login"
 
-const rootElement: HTMLElement = document.getElementById("root")
+// const rootElement: HTMLElement = document.getElementById("root")
 
 export const getRandomLink = (array: any): string => {
     const randomNumber = Math.floor(Math.random() * array.length)
@@ -41,7 +41,7 @@ function fetchRequest(method: string, url: string, body: object = {}): Promise<a
 
 
 
-export const login = (login: string, password: string, loginHandler: string, loginPageModelInstance: LoginPageModel) => {
+export const login = (login: string, password: string, loginHandler: string, loginPageModelInstance: LoginPageModel, rootElement: HTMLElement) => {
     const user = {
         login: login,
         password: password
