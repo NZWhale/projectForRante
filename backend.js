@@ -8,6 +8,7 @@ const dataPath = "./data"
 const usersFilePath = "./data/users.json"
 const Busboy = require('busboy')
 const cookieParser = require('cookie-parser')
+const arrayOfPartsPath = "./data/arrayOfParts.json"
 
 app.use(bodyParser.json())
 app.use(cookieParser())
@@ -106,7 +107,7 @@ function getFullUrls(callback) {
             callback(err)
         } else {
             files.forEach(file => {
-                if (path.extname(file.name) === ".jpg") {
+                if (path.extname(file.name) === ".jpg" || path.extname(file.name) === ".png") {
                     const fileName = file.name
                     const imgpath = "/full/" + file.name
                     if (fileName) { arr.push(imgpath) }
@@ -213,5 +214,39 @@ app.post('/check-login', (req, res) => {
     })
     // -------------------------------------------------
 
+app.post('/sendarrayofparts', (req, res) => {
+    const arrayOfParts = req.body
+    if (!fs.existsSync(dataPath)) {
+        fs.mkdirSync(dataPath)
+    }
+    if (!fs.existsSync(arrayOfPartsPath)) {
+        fs.writeFileSync(arrayOfPartsPath, "[]")
+    }
+    const arrayOfAllParts = JSON.parse(fs.readFileSync(arrayOfPartsPath), "utf-8")
+    arrayOfAllParts.push(arrayOfParts)
+    fs.writeFile("data/arrayOfParts.json", JSON.stringify(arrayOfAllParts), (err) => {
+        if (err) throw err
+        console.log("array addding successful")
+        res.status(200).send()
+    })
+})
 
+app.get("/getArrayOfParts", (req, res) => {
+    if (fs.existsSync(arrayOfPartsPath)) {
+        fs.readFile(arrayOfPartsPath, (err, data) => {
+            if (err) throw err
+            console.log(data)
+            res.send(data)
+        })
+    } else {
+        if (!fs.existsSync(arrayOfPartsPath)) {
+            fs.writeFile(arrayOfPartsPath, "[]")
+        }
+        fs.readFile(arrayOfPartsPath, (err, data) => {
+            if (err) throw err
+            console.log(data)
+            res.send(data)
+        })
+    }
+})
 app.listen(port)

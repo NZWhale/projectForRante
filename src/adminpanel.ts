@@ -22,7 +22,7 @@ window.addEventListener("load", async () => {
     function render() {
         const loginStatus = loginPageModelInstance.getLoginStatus()
         if (loginStatus === true){
-            renderAdminPage(rootElement, loginPageModelInstance, arrayOfParts)
+            renderAdminPage(rootElement, loginPageModelInstance)
         } else {
             renderAdminLoginPage(rootElement, loginPageModelInstance, loginHandler, arrayOfParts)
         }

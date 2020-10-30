@@ -1,12 +1,15 @@
+import { url } from "inspector"
 import { arrayOfParts } from "."
 import { renderAdminPage } from "./adminPageView"
 import LoginPageModel from "./LoginPageModel"
 
 export const backgroundUrl: string = "http://127.0.0.1:3000/getbackground"
-export const partsUrl: string = "http://127.0.0.1:3000/getpart"
 export const fullUrl: string = "http://127.0.0.1:3000/getfull"
 export const loginHandler: string = "http://127.0.0.1:3000/login"
-export const backendCheckLoginUrl = "http://127.0.0.1:3000/check-login"
+export const backendCheckLoginUrl: string= "http://127.0.0.1:3000/check-login"
+export const postPartsUrl: string = "http://127.0.0.1:3000/sendarrayofparts"
+export const getPartsUrl: string = "http://127.0.0.1:3000/getArrayOfParts"
+
 
 // const rootElement: HTMLElement = document.getElementById("root")
 
@@ -41,7 +44,23 @@ export function fetchRequest(method: string, url: string, body: object = {}): Pr
     return responsePromise
 }
 
+export const sendArrayOfParts = (url: string, body: Array<string>): Promise<any> =>{
+    const headers = {
+        "Content-Type": "application/json"
+    }
 
+    const response = fetch (url, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: headers,
+        credentials: "same-origin"
+    }).then((response) => {
+        return response
+    }, err => {
+        console.log(err, "data was not wrote")
+    })
+    return response
+}
 
 export const login = (login: string, password: string, loginHandler: string, loginPageModelInstance: LoginPageModel, rootElement: HTMLElement, arrayOfParts: Array<any>) => {
     const user = {
@@ -52,14 +71,14 @@ export const login = (login: string, password: string, loginHandler: string, log
     loginPromise.then((response) => {
         if (response.status === 200) {
             loginPageModelInstance.setLoginStatus(true)
-            renderAdminPage(rootElement, loginPageModelInstance, arrayOfParts)
+            renderAdminPage(rootElement, loginPageModelInstance)
             return response
         }
     })
 }
 
 
-function searchByFullImg(array: Array<Array<string>>, item: string): Array<string> {
+export const searchByFullImg = (array: Array<Array<string>>, item: string): Array<string> => {
     const result: Array<string> = []
     array.filter(el => {
         el.forEach(element => {
@@ -70,3 +89,23 @@ function searchByFullImg(array: Array<Array<string>>, item: string): Array<strin
     })
     return result
 }
+
+export const getUnusedPartsOfFullImage = (arrayOfUsedParts: Array<string>, arrayOfParts: Array<string>):Array<string> => {
+    let partOfImage
+    if (arrayOfUsedParts.length === 0) {
+        partOfImage = arrayOfParts
+        return partOfImage
+    } else {
+        let result = arrayOfParts.filter((item, index) => item != arrayOfUsedParts[index])
+        partOfImage = result
+        }
+        return partOfImage
+    }
+
+export function fetGetRequest(url: string){
+    return fetch(url).then(response => {
+        return response.json()
+    })
+}
+
+export const compareArrays = (a: Array<string>, b: Array<string>) => a.length === b.length && a.every((n, i) => n === b[i])

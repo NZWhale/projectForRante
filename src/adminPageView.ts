@@ -4,7 +4,7 @@ import { arrayOfParts } from "."
 import { deleteCookie } from "./deleteCookies"
 import { createElement, createFormElement, createH3Element, createInputElement, createSubmitElement, } from "./htmlUtils"
 import LoginPageModel from "./LoginPageModel"
-import { login } from "./utils"
+import { fetchRequest, login, postPartsUrl, sendArrayOfParts } from "./utils"
 
 
 export const renderAdminLoginPage = (rootElement: HTMLElement, loginPageModelInstance: LoginPageModel, loginHandler: string, arrayOfParts: Array<Array<string>>) => {
@@ -36,8 +36,9 @@ export const renderAdminLoginPage = (rootElement: HTMLElement, loginPageModelIns
 
 }
 
-export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance: LoginPageModel, arrayOfParts: Array<Array<string>>) => {
+export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance: LoginPageModel) => {
     rootElement.innerHTML = ""
+    let arrayOfParts:Array<string> = []
     const exitButton: HTMLElement = createElement("input", "exitButton")
     const mainDiv: HTMLElement = createElement("div", "mainDiv")
     const projectsDiv: HTMLElement = createElement("div", "projectsDiv")
@@ -71,7 +72,10 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
             file = files[i];
             arrayOfFiles.push(file.name);
         }
-        arrayOfParts.push(arrayOfFiles)
+        arrayOfParts = arrayOfFiles
+    })
+    partsSubmit.addEventListener("click", async () => {
+        await sendArrayOfParts(postPartsUrl, arrayOfParts)
     })
     fullForm.append(fullInput, fullSubmit)
     partsForm.append(partsInput, partsSubmit)
