@@ -56,6 +56,7 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     const partsH3: HTMLElement = createH3Element("partsH3", "Parts images")
     const backgroundH3: HTMLElement = createH3Element("backgroundH3", "Background image")
     partsInput.setAttribute("multiple", "true")
+    backgroundInput.setAttribute("multiple", "true")
     exitButton.setAttribute("type", "button")
     exitButton.innerText = "exit"
     exitButton.addEventListener("click", () => {
