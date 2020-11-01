@@ -2,9 +2,11 @@ import { renderAdminLoginPage } from "./adminPageView"
 import LoginPageModel from "./LoginPageModel"
 import { loginHandler, getImagesUrls, getRandomLink, getPartsUrl, backgroundUrl, fullUrl } from "./utils"
 
-export const createElement = (type: string, id: string): any => {
+export const createElement = (type: string, id?: string): any => {
     const element = document.createElement(type)
-    element.setAttribute("id", id)
+    if (id) {
+        element.setAttribute("id", id)
+    }
     return element
 }
 

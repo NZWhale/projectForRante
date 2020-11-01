@@ -11,7 +11,9 @@ export const postPartsUrl: string = "http://127.0.0.1:3000/sendarrayofparts"
 export const getPartsUrl: string = "http://127.0.0.1:3000/getArrayOfParts"
 
 
-// const rootElement: HTMLElement = document.getElementById("root")
+export const randomFromRange = (min: number, max: number) => {
+    return Math.random() * (max - min) + min;
+}
 
 export const getRandomLink = (array: any): string => {
     const randomNumber = Math.floor(Math.random() * array.length)
