@@ -1,6 +1,7 @@
 /node_modules
 /images
-/dist/*
-/full/*
-/parts/*
-/background/*
+/dist
+/full
+/parts
+/background
+/data
