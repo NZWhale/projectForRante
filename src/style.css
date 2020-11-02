@@ -1,4 +1,38 @@
-.body {
+@font-face {
+    font-family: PanamaBold;
+    src: local("PanamaBold"), url(/fonts/PanamaBold.otf);
+}
+
+@font-face {
+    font-family: PanamaItalic;
+    src: local("PanamaItalic"), url(/fonts/PanamaItalic.otf);
+}
+
+@font-face {
+    font-family: PanamaRegular;
+    src: local("PanamaRegular"), url(/fonts/PanamaRegular.otf);
+}
+
+.bgH1 {
+    font-family: panamaRegular;
+    font-size: 24px;
+    margin-left: 10px;
+}
+
+.artH1 {
+    font-family: panamaItalic;
+    font-size: 24px;
+}
+
+.artNumH1 {
+    font-family: panamaBold;
+    font-size: 24px;
+    margin-left: 10px;
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
     background-size: 100%;
     background-repeat: no-repeat;
     background-position: center center;
@@ -19,7 +53,21 @@
     background-size: cover;
 }
 
-#fullDiv {
+
+/* .header {
+    position: absolute;
+    z-index: 2;
+    background-color: #808080;
+}
+
+header::after {
+    content: '';
+    display: inline-block;
+    width: 100%;
+} */
+
+
+/* #fullDiv {
     width: 300px;
     height: 300px;
     position: absolute;
@@ -55,6 +103,15 @@
     display: flex-inline;
     margin: 0 auto;
     border: none;
+} */
+
+.header {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    background: #d8d8d5;
+    box-shadow: 1px 1px 20px 0px black;
 }
 
 img.background {
@@ -63,28 +120,31 @@ img.background {
     width: 100%;
     height: auto;
     position: fixed;
+    z-index: -1;
     top: 0;
     left: 0;
-    /* Зависит от размера изображения */
+    cursor: wait;
     @media screen and (max-width: 640px) {
         img.bg {
             left: 50%;
             margin-left: -320px;
         }
     }
-    cursor: wait;
 }
 
 .partImg {
     position: absolute;
-    width: 250px;
+    width: 200px;
     top: 50%;
     left: 50%;
     cursor: pointer;
+    margin-top: 30px;
 }
 
-.header {
+.fullImg {
     position: absolute;
-    z-index: 2;
-    background-color: #808080;
+    width: 300px;
+    top: 50%;
+    left: 50%;
+    cursor: pointer;
 }
