@@ -42,8 +42,8 @@ async function waitSinglePartStateSwitch(rootElement: HTMLElement, singlePartUrl
 async function waitMultiPartStateSwitch(rootElement: HTMLElement, partsUrls: string[]) {
     createBackground(rootElement, backgroundUrl)
 
-    const minRadiusPx = 380;
-    const maxRadiusPx = 420;
+    const minRadiusPx = 280;
+    const maxRadiusPx = 320;
     const minAngleRad = 0;
     const maxAngleRad = Math.PI * 2;
     return new Promise((resolve) => {
