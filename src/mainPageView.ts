@@ -1,24 +1,20 @@
 import { arrayOfParts } from "./index"
 import { createElement } from "./htmlUtils"
-import { backgroundUrl, fetGetRequest, fullUrl, getImagesUrls, getRandomLink, getUnusedPartsOfFullImage, getPartsUrl, searchByFullImg, compareArrays, randomFromRange } from "./utils"
-import { resolve } from "path"
+import { backgroundUrl, fetGetRequest, fullUrl, getImagesUrls, getRandomLink, getUnusedPartsOfFullImage, getPartsUrl, searchByFullImg, compareArrays, randomFromRange, getModels, getRandomModel, } from "./utils"
+import { Project } from "./ProjectModel"
+const dataPath = "/images/"
 
 export async function renderMainPage(rootElement: HTMLElement, backgroundUrl: string) {
     const headerName = "header"
-    const artefact = "1488"
-    createHeader(headerName, artefact)
-    // return Promise.all([createBackground(rootElement, backgroundUrl), createImageFull(rootElement, fullUrl)])
-
-    const arrayOfFullImages = await getImagesUrls(fullUrl)
-    const projectFullImageUrl = getRandomLink(arrayOfFullImages)
-    const singleFullImageUrl = projectFullImageUrl.split("/")[2].split(".")[0]
-    const arrayOfParts = await fetGetRequest(getPartsUrl)
-    const projectParts: Array<string> =
-        searchByFullImg(arrayOfParts, singleFullImageUrl)
-            .map((url) => `parts/${url}`)
-    const firstPart = projectParts[0]
+    const arrayOfProjectsModel: Array<Project> = await getImagesUrls(getModels)
+    const projectModel = getRandomModel(arrayOfProjectsModel)
+    const artefact = projectModel.projectNumber
+    const projectFullImageUrl = dataPath+projectModel.fullImage
+    const projectParts: Array<string> = projectModel.partOfImage
+    const firstPart = dataPath+projectParts[0]
     const restOfTheParts = projectParts.slice(1)
-
+    createHeader(headerName, artefact)
+    
     while (true) {
         await waitSinglePartStateSwitch(rootElement, firstPart)
         await waitMultiPartStateSwitch(rootElement, restOfTheParts)
@@ -48,6 +44,7 @@ async function waitMultiPartStateSwitch(rootElement: HTMLElement, partsUrls: str
     const maxAngleRad = Math.PI * 2
     return new Promise((resolve) => {
         partsUrls.forEach(partUrl => {
+            partUrl = dataPath+partUrl
             const radiusPx = Math.round(randomFromRange(minRadiusPx, maxRadiusPx))
             console.log(radiusPx)
             const angleRad = randomFromRange(minAngleRad, maxAngleRad)

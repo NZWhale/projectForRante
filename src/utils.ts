@@ -3,6 +3,7 @@ import { url } from "inspector"
 import { arrayOfParts } from "."
 import { renderAdminPage } from "./adminPageView"
 import LoginPageModel from "./LoginPageModel"
+import { Project } from "./ProjectModel"
 
 export const backgroundUrl: string = "http://127.0.0.1:3000/getbackground"
 export const fullUrl: string = "http://127.0.0.1:3000/getfull"
@@ -12,6 +13,7 @@ export const postPartsUrl: string = "http://127.0.0.1:3000/sendarrayofparts"
 export const getPartsUrl: string = "http://127.0.0.1:3000/getArrayOfParts"
 export const sendProject: string = "http://127.0.0.1:3000/sendproject"
 export const sendBackground: string = "http://127.0.0.1:3000/background"
+export const getModels: string = "http://127.0.0.1:3000/getprojectsmodel"
 
 
 export const randomFromRange = (min: number, max: number) => {
@@ -24,7 +26,13 @@ export const getRandomLink = (array: any): string => {
     return randomLink
 }
 
-export async function getImagesUrls(backgroundUrl: string): Promise<string[]> {
+export const getRandomModel = (array: any): Project => {
+    const randomNumber = Math.floor(Math.random() * array.length)
+    const randomModel = array[randomNumber]
+    return randomModel
+}
+
+export async function getImagesUrls(backgroundUrl: string) {
     const response = await fetch(backgroundUrl)
     const urls = await response.json()
     return urls
@@ -152,9 +160,3 @@ export const uploadModel = (body: object) => {
         )
 }
 
-// Event handler executed when a file is selected
-// const onSelectFile = () => upload(input.files[0]);
-
-// Add a listener on your input
-// It will be triggered when a file will be selected
-// input.addEventListener('change', onSelectFile, false);

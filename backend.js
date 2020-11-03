@@ -7,12 +7,10 @@ const port = 3000
 const dataPath = "./data"
 const usersFilePath = "./data/users.json"
 const Busboy = require('busboy')
-const multer = require('multer')
 const cookieParser = require('cookie-parser')
-const arrayOfPartsPath = "./data/arrayOfParts.json"
 const projectsModel = "./data/projectsModel.json"
-const imagesPath = `${__dirname}/data/images`
-const backgroundPath = `${__dirname}/data/background`
+const imagesPath = `${__dirname}/images`
+const backgroundPath = `${__dirname}/background`
 
 app.use(bodyParser.json())
 app.use(cookieParser())
@@ -86,73 +84,20 @@ function getBackgroundUrls(callback) {
         }
     })
 }
-
-function getPartsUrls(callback) {
-    const arr = []
-    fs.readdir("./parts", { withFileTypes: true }, (err, files) => {
-        if (err) {
-            callback(err)
-        } else {
-            files.forEach(file => {
-                if (path.extname(file.name) === ".jpg" || path.extname(file.name) === ".png") {
-                    const fileName = file.name
-                    const imgpath = "/parts/" + file.name
-                    if (fileName) { arr.push(imgpath) }
-                }
-            })
-            callback(null, arr)
-        }
-    })
-}
-
-function getFullUrls(callback) {
-    const arr = []
-    fs.readdir("./full", { withFileTypes: true }, (err, files) => {
-        if (err) {
-            callback(err)
-        } else {
-            files.forEach(file => {
-                if (path.extname(file.name) === ".jpg" || path.extname(file.name) === ".png") {
-                    const fileName = file.name
-                    const imgpath = "/full/" + file.name
-                    if (fileName) { arr.push(imgpath) }
-                }
-            })
-            callback(null, arr)
-        }
-    })
-}
 //--------------------------------------
 
+
+// get projects models
+app.get("/getprojectsmodel", (req, res) => {
+        const arrayOfAllModels = JSON.parse(fs.readFileSync(projectsModel), "utf-8")
+        if (!arrayOfAllModels) throw error
+        res.send(JSON.stringify(arrayOfAllModels))
+    })
+    // ------------------------------
 
 // get background images from the server
 app.get("/getbackground", (req, res) => {
         getBackgroundUrls((err, arr) => {
-            if (err) {
-                res.send("error")
-            } else {
-                res.send(JSON.stringify(arr))
-            }
-        })
-    })
-    // ----------------------------------------
-
-// get parts images from the server
-app.get("/getpart", (req, res) => {
-        getPartsUrls((err, arr) => {
-            if (err) {
-                res.send("error")
-            } else {
-                res.send(JSON.stringify(arr))
-            }
-        })
-    })
-    // ----------------------------------------
-
-
-// get full images from the server
-app.get("/getfull", (req, res) => {
-        getFullUrls((err, arr) => {
             if (err) {
                 res.send("error")
             } else {
@@ -218,43 +163,6 @@ app.post('/check-login', (req, res) => {
         }
     })
     // -------------------------------------------------
-
-app.post('/sendarrayofparts', (req, res) => {
-    const arrayOfParts = req.body
-    if (!fs.existsSync(dataPath)) {
-        fs.mkdirSync(dataPath)
-    }
-    if (!fs.existsSync(arrayOfPartsPath)) {
-        fs.writeFileSync(arrayOfPartsPath, "[]")
-    }
-    const arrayOfAllParts = JSON.parse(fs.readFileSync(arrayOfPartsPath), "utf-8")
-    arrayOfAllParts.push(arrayOfParts)
-    fs.writeFile("data/arrayOfParts.json", JSON.stringify(arrayOfAllParts), (err) => {
-        if (err) throw err
-        console.log("array added successful")
-        res.status(200).send()
-    })
-})
-
-app.get("/getArrayOfParts", (req, res) => {
-    if (fs.existsSync(arrayOfPartsPath)) {
-        fs.readFile(arrayOfPartsPath, (err, data) => {
-            if (err) throw err
-            console.log(data)
-            res.send(data)
-        })
-    } else {
-        if (!fs.existsSync(arrayOfPartsPath)) {
-            fs.writeFile(arrayOfPartsPath, "[]")
-        }
-        fs.readFile(arrayOfPartsPath, (err, data) => {
-            if (err) throw err
-            console.log(data)
-            res.send(data)
-        })
-    }
-})
-
 
 
 app.listen(port)
