@@ -1,3 +1,4 @@
+import { error } from "console"
 import { url } from "inspector"
 import { arrayOfParts } from "."
 import { renderAdminPage } from "./adminPageView"
@@ -9,6 +10,8 @@ export const loginHandler: string = "http://127.0.0.1:3000/login"
 export const backendCheckLoginUrl: string= "http://127.0.0.1:3000/check-login"
 export const postPartsUrl: string = "http://127.0.0.1:3000/sendarrayofparts"
 export const getPartsUrl: string = "http://127.0.0.1:3000/getArrayOfParts"
+export const sendProject: string = "http://127.0.0.1:3000/sendproject"
+export const sendBackground: string = "http://127.0.0.1:3000/background"
 
 
 export const randomFromRange = (min: number, max: number) => {
@@ -111,3 +114,47 @@ export function fetGetRequest(url: string){
 }
 
 export const compareArrays = (a: Array<string>, b: Array<string>) => a.length === b.length && a.every((n, i) => n === b[i])
+
+
+
+
+export const uploadImage = (file: FormData, url: string) => {
+  fetch(url, { 
+    method: 'POST',
+    // headers: {
+    //     "Content-Type": "multipart/form-data"
+    // },
+    credentials: "same-origin",
+    body: file 
+  }).then(
+    response => response.json() 
+  ).then(
+    success => console.log(success) 
+  ).catch(
+    error => console.log(error) 
+  );
+};
+
+export const uploadModel = (body: object) => {
+    fetch("http://127.0.0.1:3000/sendprojectmodel", {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        }, 
+        credentials: "same-origin",
+        body: JSON.stringify(body)
+    }).then(
+        response => response.json()
+        ).then(
+            success => console.log(success)
+        ).catch(
+            error => console.log(error)
+        )
+}
+
+// Event handler executed when a file is selected
+// const onSelectFile = () => upload(input.files[0]);
+
+// Add a listener on your input
+// It will be triggered when a file will be selected
+// input.addEventListener('change', onSelectFile, false);

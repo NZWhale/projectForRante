@@ -7,51 +7,56 @@ const port = 3000
 const dataPath = "./data"
 const usersFilePath = "./data/users.json"
 const Busboy = require('busboy')
+const multer = require('multer')
 const cookieParser = require('cookie-parser')
 const arrayOfPartsPath = "./data/arrayOfParts.json"
+const projectsModel = "./data/projectsModel.json"
+const imagesPath = `${__dirname}/data/images`
+const backgroundPath = `${__dirname}/data/background`
 
 app.use(bodyParser.json())
 app.use(cookieParser())
 app.use(express.static(__dirname))
 
 //handlers for uploading images
+app.post('/sendprojectmodel', (req, res) => {
+    const projectModel = req.body
+    if (!fs.existsSync(dataPath)) {
+        fs.mkdirSync(dataPath)
+    }
+    if (!fs.existsSync(projectsModel)) {
+        fs.writeFileSync(projectsModel, "[]")
+    }
+    const arrayOfAllModels = JSON.parse(fs.readFileSync(projectsModel), "utf-8")
+    arrayOfAllModels.push(projectModel)
+    fs.writeFile("data/projectsModel.json", JSON.stringify(arrayOfAllModels), (err) => {
+        if (err) throw err
+        console.log("model added successful")
+        res.status(200).send()
+    })
+})
+
+app.post('/sendproject', function(req, res) {
+    const busboy = new Busboy({ headers: req.headers });
+    busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+
+        const saveTo = path.join(imagesPath, filename);
+        file.pipe(fs.createWriteStream(saveTo));
+    });
+
+    busboy.on('finish', function() {
+        res.writeHead(200, { 'Connection': 'close' });
+        res.end("That's all folks!");
+    });
+
+    return req.pipe(busboy);
+});
+
 app.post('/background', function(req, res) {
     const busboy = new Busboy({ headers: req.headers });
     busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
 
-        const saveTo = path.join(__dirname, 'background/' + filename);
-        file.pipe(fs.createWriteStream(saveTo));
-    });
-
-    busboy.on('finish', function() {
-        res.writeHead(200, { 'Connection': 'close' });
-        res.end("That's all folks!");
-    });
-
-    return req.pipe(busboy);
-});
-
-app.post('/full', function(req, res) {
-    const busboy = new Busboy({ headers: req.headers });
-    busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-
-        const saveTo = path.join(__dirname, 'full/' + filename);
-        file.pipe(fs.createWriteStream(saveTo));
-    });
-
-    busboy.on('finish', function() {
-        res.writeHead(200, { 'Connection': 'close' });
-        res.end("That's all folks!");
-    });
-
-    return req.pipe(busboy);
-});
-
-app.post('/parts', function(req, res) {
-    const busboy = new Busboy({ headers: req.headers });
-    busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-
-        const saveTo = path.join(__dirname, 'parts/' + filename);
+        const saveTo = path.join(backgroundPath, filename);
         file.pipe(fs.createWriteStream(saveTo));
     });
 
@@ -226,7 +231,7 @@ app.post('/sendarrayofparts', (req, res) => {
     arrayOfAllParts.push(arrayOfParts)
     fs.writeFile("data/arrayOfParts.json", JSON.stringify(arrayOfAllParts), (err) => {
         if (err) throw err
-        console.log("array addding successful")
+        console.log("array added successful")
         res.status(200).send()
     })
 })
@@ -249,4 +254,7 @@ app.get("/getArrayOfParts", (req, res) => {
         })
     }
 })
+
+
+
 app.listen(port)
