@@ -8,9 +8,10 @@ export async function renderMainPage(rootElement: HTMLElement, backgroundUrl: st
     const headerName = "header"
     const arrayOfProjectsModel: Array<Project> = await getImagesUrls(getModels)
     const projectModel = getRandomModel(arrayOfProjectsModel)
-    const artefact = projectModel.projectNumber
-    const projectFullImageUrl = dataPath+projectModel.fullImage
+    const artefact: string = projectModel.projectNumber
+    const projectFullImageUrl: string = dataPath+projectModel.fullImage
     const projectParts: Array<string> = projectModel.partOfImage
+    const projectDescription: string = dataPath+projectModel.projectDescription
     const firstPart = dataPath+projectParts[0]
     const restOfTheParts = projectParts.slice(1)
     createHeader(headerName, artefact)
@@ -19,8 +20,18 @@ export async function renderMainPage(rootElement: HTMLElement, backgroundUrl: st
         await waitSinglePartStateSwitch(rootElement, firstPart)
         await waitMultiPartStateSwitch(rootElement, restOfTheParts)
         await waitFullPageStateSwith(rootElement, projectFullImageUrl)
+        await waitDescriptionStateSwitch(rootElement, projectDescription)
     }
 }
+
+async function waitDescriptionStateSwitch(rootElement: HTMLElement, projectDescription: string) {
+    rootElement.innerHTML = ""
+    createBackground(rootElement, backgroundUrl)
+    const fullImg = createPartImage(projectDescription, 0, 0)
+    fullImg.setAttribute("class", "projectDescription")
+    rootElement.appendChild(fullImg)
+    return new Promise((resolve) => null)
+}   
 
 async function waitSinglePartStateSwitch(rootElement: HTMLElement, singlePartUrl: string): Promise<void> {
     createBackground(rootElement, backgroundUrl)
@@ -46,7 +57,6 @@ async function waitMultiPartStateSwitch(rootElement: HTMLElement, partsUrls: str
         partsUrls.forEach(partUrl => {
             partUrl = dataPath+partUrl
             const radiusPx = Math.round(randomFromRange(minRadiusPx, maxRadiusPx))
-            console.log(radiusPx)
             const angleRad = randomFromRange(minAngleRad, maxAngleRad)
             const partImg = createPartImage(partUrl, radiusPx, angleRad)
             partImg.addEventListener("click", () => {
@@ -60,10 +70,15 @@ async function waitMultiPartStateSwitch(rootElement: HTMLElement, partsUrls: str
 async function waitFullPageStateSwith(rootElement: HTMLElement, singleImageUrl: string) {
     rootElement.innerHTML = ""
     createBackground(rootElement, backgroundUrl)
-    const fullImg = createPartImage(singleImageUrl, 0, 0)
-    fullImg.setAttribute("class", "fullImg")
-    rootElement.appendChild(fullImg)
-    return new Promise((resolve) => null)
+ 
+    return new Promise((resolve) => {
+        const fullImg = createPartImage(singleImageUrl, 0, 0)
+        fullImg.setAttribute("class", "fullImg")
+        rootElement.appendChild(fullImg)
+        fullImg.addEventListener("click", () => {
+            resolve()
+        })
+    })
 }
 
 

@@ -55,17 +55,20 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     const backgroundForm = <HTMLFormElement> createFormElement("background")
     backgroundForm.id = "backgroundForm"
     const mainDiv: HTMLElement = createElement("div", "mainDiv")
+    mainDiv.setAttribute("class", "mainDiv")
     const projectsDiv: HTMLElement = createElement("div", "projectsDiv")
     const backgroundDiv: HTMLElement = createElement("div", "backgroundDiv")
     const projectNumberInput: HTMLElement = createElement("input", "projectNumberInput")
     const fullInput = <HTMLInputElement>createInputElement("fullInput")
     const partsInput = <HTMLInputElement>createInputElement("partsInput")
+    const descriptionInput = <HTMLInputElement>createInputElement("descriptionInput")
     const backgroundInput = <HTMLInputElement>createInputElement("backgroundInput")
     const backgroundSubmit: HTMLElement = createSubmitElement("backgroundSubmit")
     const projectSubmit: HTMLElement = createSubmitElement("projectSubmit")
     const numberH3: HTMLElement = createH3Element("numberH3", "Project number")
     const fullH3: HTMLElement = createH3Element("fullH3", "Full image")
     const partsH3: HTMLElement = createH3Element("partsH3", "Parts images")
+    const descriptionH3: HTMLElement = createH3Element("descriptionH3", "Desription of project")
     const backgroundH3: HTMLElement = createH3Element("backgroundH3", "Background image")
     partsInput.setAttribute("multiple", "true")
     backgroundInput.setAttribute("multiple", "true")
@@ -78,16 +81,15 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     })
     projectSubmit.addEventListener("click", async () => {
         const fullFileName = getFilesNames("fullInput")
-        console.log(fullFileName)
         const partsOfFilesNames = getFilesNames("partsInput")
-        console.log(partsOfFilesNames)
+        const projectDescription = getFilesNames("descriptionInput")
         const projectNumberInput = <HTMLInputElement>document.getElementById("projectNumberInput")
         const projectNumber: string = projectNumberInput.value
-        console.log(projectNumber)
         const projectModel: Project = {
             projectNumber: projectNumber,
             fullImage: fullFileName[0],
-            partOfImage: partsOfFilesNames
+            partOfImage: partsOfFilesNames,
+            projectDescription: projectDescription[0]
         }
         console.log(projectModel)
         const form = <HTMLFormElement> document.getElementById("projectForm")
@@ -101,7 +103,7 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
         uploadImage(formData, sendBackground)
 
     })
-    projectsDiv.append(numberH3, projectNumberInput, fullH3, fullInput, partsH3, partsInput, projectSubmit)
+    projectsDiv.append(numberH3, projectNumberInput, fullH3, fullInput, partsH3, partsInput, descriptionH3, descriptionInput, projectSubmit)
     backgroundDiv.append(backgroundH3, backgroundInput, backgroundSubmit)
     projectForm.append(projectsDiv)
     backgroundForm.append(backgroundDiv)

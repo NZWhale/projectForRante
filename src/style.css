@@ -148,3 +148,16 @@ img.background {
     left: 50%;
     cursor: pointer;
 }
+
+.mainDiv {
+    display: inline-flex;
+    padding: 50px;
+}
+
+.projectDescription {
+    position: absolute;
+    width: 700px;
+    top: 50%;
+    left: 50%;
+    cursor: pointer;
+}
