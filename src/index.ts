@@ -5,5 +5,5 @@ export const arrayOfParts: Array<Array<string>> = []
 
 window.addEventListener("load", async () => {
     const rootElement: HTMLElement = document.getElementById("root")
-    renderMainPage(rootElement, backgroundUrl)
+    renderMainPage(rootElement)
 })

@@ -4,7 +4,7 @@ import { backgroundUrl, fetGetRequest, fullUrl, getImagesUrls, getRandomLink, ge
 import { Project } from "./ProjectModel"
 const dataPath = "/images/"
 
-export async function renderMainPage(rootElement: HTMLElement, backgroundUrl: string) {
+export async function renderMainPage(rootElement: HTMLElement) {
     const headerName = "header"
     const arrayOfProjectsModel: Array<Project> = await getImagesUrls(getModels)
     const projectModel = getRandomModel(arrayOfProjectsModel)
@@ -12,6 +12,7 @@ export async function renderMainPage(rootElement: HTMLElement, backgroundUrl: st
     const projectFullImageUrl: string = dataPath+projectModel.fullImage
     const projectParts: Array<string> = projectModel.partOfImage
     const projectDescription: string = dataPath+projectModel.projectDescription
+    const sameProjects: Array<string> = projectModel.projectsFromSameCollection
     const firstPart = dataPath+projectParts[0]
     const restOfTheParts = projectParts.slice(1)
     createHeader(headerName, artefact)
@@ -20,17 +21,40 @@ export async function renderMainPage(rootElement: HTMLElement, backgroundUrl: st
         await waitSinglePartStateSwitch(rootElement, firstPart)
         await waitMultiPartStateSwitch(rootElement, restOfTheParts)
         await waitFullPageStateSwith(rootElement, projectFullImageUrl)
+        await waitForSameProjectsStateSwitch(rootElement, sameProjects)
         await waitDescriptionStateSwitch(rootElement, projectDescription)
     }
 }
 
+async function waitForSameProjectsStateSwitch(rootElement: HTMLElement, sameProjects: Array<string>){
+    createBackground(rootElement, backgroundUrl)
+
+return new Promise((resolve) => {    
+    const minRadiusPx = 200
+    const maxRadiusPx = 400
+    const minAngleRad = 0
+    const maxAngleRad = Math.PI * 2
+    sameProjects.forEach(projectUrl => {
+        projectUrl = dataPath+projectUrl
+        const radiusPx = Math.round(randomFromRange(minRadiusPx, maxRadiusPx))
+        const angleRad = randomFromRange(minAngleRad, maxAngleRad)
+        const projectImg = createPartImage(projectUrl, radiusPx, angleRad)
+        projectImg.addEventListener("click", () => {
+            resolve()
+        })
+        rootElement.appendChild(projectImg)
+    })})
+}
+
+
 async function waitDescriptionStateSwitch(rootElement: HTMLElement, projectDescription: string) {
     rootElement.innerHTML = ""
     createBackground(rootElement, backgroundUrl)
-    const fullImg = createPartImage(projectDescription, 0, 0)
-    fullImg.setAttribute("class", "projectDescription")
-    rootElement.appendChild(fullImg)
-    return new Promise((resolve) => null)
+    const descriptionImg = createPartImage(projectDescription, 0, 0)
+    descriptionImg.setAttribute("class", "projectDescription")
+    rootElement.appendChild(descriptionImg)
+    return new Promise((resolve) => {null})
+
 }   
 
 async function waitSinglePartStateSwitch(rootElement: HTMLElement, singlePartUrl: string): Promise<void> {

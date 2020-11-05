@@ -3,4 +3,5 @@ export interface Project {
     fullImage: string,
     partOfImage: Array<string>
     projectDescription: string,
+    projectsFromSameCollection: Array<string>
 }
