@@ -92,7 +92,7 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
         const projectModel: Project = {
             projectNumber: projectNumber,
             fullImage: fullFileName[0],
-            partOfImage: partsOfFilesNames,
+            partsOfImage: partsOfFilesNames,
             projectDescription: projectDescription[0],
             projectsFromSameCollection: projectsFromSameCollection
         }

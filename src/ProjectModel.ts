@@ -1,7 +1,7 @@
 export interface Project {
     projectNumber: string,
     fullImage: string,
-    partOfImage: Array<string>
+    partsOfImage: Array<string>
     projectDescription: string,
     projectsFromSameCollection: Array<string>
 }

@@ -9,101 +9,90 @@ export async function renderMainPage(rootElement: HTMLElement) {
     const arrayOfProjectsModel: Array<Project> = await getImagesUrls(getModels)
     const projectModel = getRandomModel(arrayOfProjectsModel)
     const artefact: string = projectModel.projectNumber
-    const projectFullImageUrl: string = dataPath+projectModel.fullImage
-    const projectParts: Array<string> = projectModel.partOfImage
-    const projectDescription: string = dataPath+projectModel.projectDescription
-    const sameProjects: Array<string> = projectModel.projectsFromSameCollection
-    const firstPart = dataPath+projectParts[0]
-    const restOfTheParts = projectParts.slice(1)
     createHeader(headerName, artefact)
-    
-    while (true) {
-        await waitSinglePartStateSwitch(rootElement, firstPart)
-        await waitMultiPartStateSwitch(rootElement, restOfTheParts)
-        await waitFullPageStateSwith(rootElement, projectFullImageUrl)
-        await waitForSameProjectsStateSwitch(rootElement, sameProjects)
-        await waitDescriptionStateSwitch(rootElement, projectDescription)
-    }
+    singlePartImageRender(rootElement, projectModel)
+} 
+
+const singlePartImageRender = (rootElement: HTMLElement, projectModel: Project) => {
+    createBackground(rootElement, backgroundUrl)
+    const singlePartUrl: string = dataPath + projectModel.partsOfImage[0]
+    const partOfImg = createPartImage(singlePartUrl, 0, 0)
+    partOfImg.addEventListener("click", () => {
+        multiPartImagesRender(rootElement, projectModel)
+    })
+    rootElement.append(partOfImg)
 }
 
-async function waitForSameProjectsStateSwitch(rootElement: HTMLElement, sameProjects: Array<string>){
+const multiPartImagesRender = (rootElement: HTMLElement, projectModel: Project) => {
     createBackground(rootElement, backgroundUrl)
+    const partsUrls: Array<string> = projectModel.partsOfImage.slice(1)
+    console.log(partsUrls)
+    const minRadiusPx = 180
+    const maxRadiusPx = 200
+    const minAngleRad = 0
+    const maxAngleRad = Math.PI * 2
+    partsUrls.forEach(partUrl => {
+        partUrl = dataPath + partUrl
+        const radiusPx = Math.round(randomFromRange(minRadiusPx, maxRadiusPx))
+        const angleRad = randomFromRange(minAngleRad, maxAngleRad)
+        const partImg = createPartImage(partUrl, radiusPx, angleRad)
+        partImg.addEventListener("click", () => {
+            fullImageRender(rootElement, projectModel)
+        })
+        rootElement.appendChild(partImg)
+    })
 
-return new Promise((resolve) => {    
+}
+
+const fullImageRender = (rootElement: HTMLElement, projectModel: Project) => {
+    rootElement.innerHTML = ""
+    createBackground(rootElement, backgroundUrl)
+    const fullImageUrl: string = dataPath + projectModel.fullImage
+    const fullImg = createPartImage(fullImageUrl, 0, 0)
+    fullImg.setAttribute("class", "fullImg")
+    fullImg.addEventListener("click", () => {
+        sameProjectsImagesRender(rootElement, projectModel)
+    })
+    rootElement.appendChild(fullImg)
+}
+
+const sameProjectsImagesRender = (rootElement: HTMLElement, projectModel: Project) => {
+    createBackground(rootElement, backgroundUrl)
+    let usedImages: Array<string>
+    const sameProjects: Array<string> = projectModel.projectsFromSameCollection
     const minRadiusPx = 200
     const maxRadiusPx = 400
     const minAngleRad = 0
     const maxAngleRad = Math.PI * 2
     sameProjects.forEach(projectUrl => {
-        projectUrl = dataPath+projectUrl
+        projectUrl = dataPath + projectUrl
         const radiusPx = Math.round(randomFromRange(minRadiusPx, maxRadiusPx))
         const angleRad = randomFromRange(minAngleRad, maxAngleRad)
         const projectImg = createPartImage(projectUrl, radiusPx, angleRad)
         projectImg.addEventListener("click", () => {
-            resolve()
+            descriptionImageRender(rootElement, projectModel)
         })
         rootElement.appendChild(projectImg)
-    })})
+    })
 }
 
 
-async function waitDescriptionStateSwitch(rootElement: HTMLElement, projectDescription: string) {
+const descriptionImageRender = (rootElement: HTMLElement, projectModel: Project) => {
     rootElement.innerHTML = ""
     createBackground(rootElement, backgroundUrl)
+    const projectDescription: string = dataPath + projectModel.projectDescription
     const descriptionImg = createPartImage(projectDescription, 0, 0)
     descriptionImg.setAttribute("class", "projectDescription")
+    descriptionImg.addEventListener("click", () => {
+
+    })
     rootElement.appendChild(descriptionImg)
-    return new Promise((resolve) => {null})
-
-}   
-
-async function waitSinglePartStateSwitch(rootElement: HTMLElement, singlePartUrl: string): Promise<void> {
-    createBackground(rootElement, backgroundUrl)
-    const partOfImg = createPartImage(singlePartUrl, 0, 0)
-
-    rootElement.append(partOfImg)
-
-    return new Promise((resolve) => {
-        partOfImg.addEventListener("click", () => {
-            resolve()
-        })
-    })
 }
 
-async function waitMultiPartStateSwitch(rootElement: HTMLElement, partsUrls: string[]) {
-    createBackground(rootElement, backgroundUrl)
 
-    const minRadiusPx = 180
-    const maxRadiusPx = 200
-    const minAngleRad = 0
-    const maxAngleRad = Math.PI * 2
-    return new Promise((resolve) => {
-        partsUrls.forEach(partUrl => {
-            partUrl = dataPath+partUrl
-            const radiusPx = Math.round(randomFromRange(minRadiusPx, maxRadiusPx))
-            const angleRad = randomFromRange(minAngleRad, maxAngleRad)
-            const partImg = createPartImage(partUrl, radiusPx, angleRad)
-            partImg.addEventListener("click", () => {
-                resolve()
-            })
-            rootElement.appendChild(partImg)
-        })
-    })
-}
 
-async function waitFullPageStateSwith(rootElement: HTMLElement, singleImageUrl: string) {
-    rootElement.innerHTML = ""
-    createBackground(rootElement, backgroundUrl)
- 
-    return new Promise((resolve) => {
-        const fullImg = createPartImage(singleImageUrl, 0, 0)
-        fullImg.setAttribute("class", "fullImg")
-        rootElement.appendChild(fullImg)
-        fullImg.addEventListener("click", () => {
-            resolve()
-        })
-    })
-}
+
+
 
 
 const createHeader = (headerName: string, artefact: string) => {
