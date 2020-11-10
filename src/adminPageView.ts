@@ -85,17 +85,17 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     projectSubmit.addEventListener("click", async () => {
         const fullFileName = getFilesNames("fullInput")
         const partsOfFilesNames = getFilesNames("partsInput")
-        const projectDescription = getFilesNames("descriptionInput")
-        const projectsFromSameCollection = getFilesNames("projectsFromSameCollection")
+        let projectDescription = getFilesNames("descriptionInput")
+        let projectsFromSameCollection = getFilesNames("projectsFromSameCollection")
         const projectNumberInput = <HTMLInputElement>document.getElementById("projectNumberInput")
         const projectNumber: string = projectNumberInput.value
         const projectModel: Project = {
             projectNumber: projectNumber,
             fullImage: fullFileName[0],
             partsOfImage: partsOfFilesNames,
-            projectDescription: projectDescription[0],
-            projectsFromSameCollection: projectsFromSameCollection
         }
+        if(projectDescription){projectModel.projectDescription = projectDescription[0]}
+        if(projectsFromSameCollection){projectModel.projectsFromSameCollection = projectsFromSameCollection}
         console.log(projectModel)
         const form = <HTMLFormElement> document.getElementById("projectForm")
         const formData: FormData = new FormData(form)

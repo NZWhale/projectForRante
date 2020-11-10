@@ -91,17 +91,7 @@ export const login = (login: string, password: string, loginHandler: string, log
 }
 
 
-export const searchByFullImg = (array: Array<Array<string>>, item: string): Array<string> => {
-    const result: Array<string> = []
-    array.filter(el => {
-        el.forEach(element => {
-            if (element.includes(item)) {
-                result.push(element)
-            }
-        });
-    })
-    return result
-}
+
 
 export const getUnusedPartsOfFullImage = (arrayOfUsedParts: Array<string>, arrayOfParts: Array<string>):Array<string> => {
     let partOfImage
@@ -129,9 +119,6 @@ export const compareArrays = (a: Array<string>, b: Array<string>) => a.length ==
 export const uploadImage = (file: FormData, url: string) => {
   fetch(url, { 
     method: 'POST',
-    // headers: {
-    //     "Content-Type": "multipart/form-data"
-    // },
     credentials: "same-origin",
     body: file 
   }).then(
