@@ -28,7 +28,7 @@ async function singlePartImageRender(rootElement: HTMLElement, header: HTMLEleme
 }
 
 const multiPartImagesRender = (rootElement: HTMLElement, header: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>) => {
-    updateBackground(rootElement, header, arrayOfBackgroundUrls)
+    // updateBackground(rootElement, header, arrayOfBackgroundUrls)
     const partsUrls: Array<string> = projectModel.partsOfImage.slice(1)
     console.log(partsUrls)
     if (partsUrls) {
