@@ -15,12 +15,14 @@ export const sendProject: string = "http://127.0.0.1:3000/sendproject"
 export const sendBackground: string = "http://127.0.0.1:3000/background"
 export const getModels: string = "http://127.0.0.1:3000/getprojectsmodel"
 
+export const arrayOfCoordinates = ["(268.368px, -155.902px)", "(-336.931px, 155.302px)", "(-260.831px, -46.8233px)", "(-324.611px, 122.624px)", "(309.284px, -21.0505px)", "(-194.68px, -191.387px)", "(-301.94px, 49.6814px)", "(296.896px, 159.727px)", "(-353.183px, -155.749px)", "(-256.846px, -164.485px)", "(323.093px, -120.978px)", "(-361.618px, 49.5731px)"]
 
 export const randomFromRange = (min: number, max: number) => {
     return Math.random() * (max - min) + min;
 }
 
-export const getRandomLink = (array: any): string => {
+
+export const getRandomFromArray = (array: any): string => {
     const randomNumber = Math.floor(Math.random() * array.length)
     const randomLink = array[randomNumber]
     return randomLink
