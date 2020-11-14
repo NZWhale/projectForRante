@@ -20,6 +20,7 @@ async function singlePartImageRender(rootElement: HTMLElement, header: HTMLEleme
     const singlePartUrl: string = dataPath + projectModel.partsOfImage[0]
     const partOfImg = createPartImage(singlePartUrl, 0, 0)
     partOfImg.addEventListener("click", () => {
+        rootElement.innerHTML = ""
         multiPartImagesRender(rootElement, header, projectModel, arrayOfBackgroundUrls)
     })
     updateBackground(rootElement, header, arrayOfBackgroundUrls)
@@ -29,7 +30,8 @@ async function singlePartImageRender(rootElement: HTMLElement, header: HTMLEleme
 
 const multiPartImagesRender = (rootElement: HTMLElement, header: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>) => {
     // updateBackground(rootElement, header, arrayOfBackgroundUrls)
-    const partsUrls: Array<string> = projectModel.partsOfImage.slice(1)
+    // const partsUrls: Array<string> = projectModel.partsOfImage.slice(1)
+    const partsUrls: Array<string> = projectModel.partsOfImage
     console.log(partsUrls)
     if (partsUrls) {
         const minRadiusPx = 180
@@ -51,6 +53,7 @@ const multiPartImagesRender = (rootElement: HTMLElement, header: HTMLElement, pr
     }
 
 }
+
 
 const fullImageRender = (rootElement: HTMLElement, header: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>) => {
     rootElement.innerHTML = ""
@@ -77,12 +80,6 @@ const sameProjectsImagesRender = (rootElement: HTMLElement, header: HTMLElement,
     let usedProjects: Array<string> = []
     const projectUrl = sameProjects[0]
     usedProjects.push(projectUrl)
-    const minRadiusPx = 200
-    const maxRadiusPx = 400
-    const minAngleRad = 0
-    const maxAngleRad = Math.PI * 2
-    const radiusPx = Math.round(randomFromRange(minRadiusPx, maxRadiusPx))
-    const angleRad = randomFromRange(minAngleRad, maxAngleRad)
     const projectImg = createPartImage(dataPath + projectUrl, 0, 0)
     projectImg.addEventListener('click', () => {
         rootElement.innerHTML = ""
