@@ -60,6 +60,7 @@ const fullImageRender = (rootElement: HTMLElement, header: HTMLElement, projectM
     fullImg.setAttribute("class", "fullImg")
     fullImg.addEventListener("click", () => {
         if (projectModel.projectsFromSameCollection) {
+            rootElement.innerHTML = ""
             sameProjectsImagesRender(rootElement, header, projectModel, arrayOfBackgroundUrls)
         } else if (projectModel.projectDescription) {
             descriptionImageRender(rootElement, header, projectModel, arrayOfBackgroundUrls)
@@ -82,8 +83,9 @@ const sameProjectsImagesRender = (rootElement: HTMLElement, header: HTMLElement,
     const maxAngleRad = Math.PI * 2
     const radiusPx = Math.round(randomFromRange(minRadiusPx, maxRadiusPx))
     const angleRad = randomFromRange(minAngleRad, maxAngleRad)
-    const projectImg = createImageFromTheSameCollection(dataPath + projectUrl, arrayOfCoordinates)
+    const projectImg = createPartImage(dataPath + projectUrl, 0, 0)
     projectImg.addEventListener('click', () => {
+        rootElement.innerHTML = ""
         drawImageFromTheSameCollection(rootElement, header, projectModel, arrayOfBackgroundUrls, usedProjects, sameProjects)
     })
     rootElement.appendChild(projectImg)
@@ -93,8 +95,9 @@ function drawImageFromTheSameCollection(rootElement: HTMLElement, header: HTMLEl
     if (!compareArrays(usedProjects, sameProjects)) {
         updateBackground(rootElement, header, arrayOfBackgroundUrls)
         const unusedProjects = getUnusedPartsOfFullImage(usedProjects, sameProjects)
-        const projectImg = createImageFromTheSameCollection(dataPath + unusedProjects[0], arrayOfCoordinates)
+        const projectImg = createPartImage(dataPath + unusedProjects[0], 0, 0)
         projectImg.addEventListener("click", () => { 
+            rootElement.innerHTML = ""
             updateBackground(rootElement, header, arrayOfBackgroundUrls)
             drawImageFromTheSameCollection(rootElement, header, projectModel, arrayOfBackgroundUrls, usedProjects, sameProjects)
         })
