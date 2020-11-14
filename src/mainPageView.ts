@@ -124,7 +124,7 @@ const createHeader = (headerName: string, artefact: string) => {
     const bgH1 = createElement("h1")
     const artH1 = createElement("h1")
     const artNumH1 = createElement("h1", "artefact")
-    bgH1.innerText = "Background / "
+    bgH1.innerText = "Background /"
     artH1.innerText = "artefact"
     artNumH1.innerText = `${artefact}`
     bgH1.setAttribute("class", "bgH1")

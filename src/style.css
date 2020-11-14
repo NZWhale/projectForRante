@@ -1,33 +1,45 @@
 @font-face {
     font-family: PanamaBold;
-    src: local("PanamaBold"), url(/fonts/PanamaBold.otf);
+    src: local("PanamaBold"), url(/fonts/Panama-Bold.woff) format("woff"), url(/fonts/Panama-Bold.ttf) format("ttf");
 }
 
 @font-face {
     font-family: PanamaItalic;
-    src: local("PanamaItalic"), url(/fonts/PanamaItalic.otf);
+    src: local("PanamaItalic"), url(/fonts/Panama-Italic.woff) format("woff"), url(/fonts/Panama-Italic.woff) format("ttf");
 }
 
 @font-face {
     font-family: PanamaRegular;
-    src: local("PanamaRegular"), url(/fonts/PanamaRegular.otf);
+    src: local("PanamaRegular"), url(/fonts/Panama-Regular.woff) format("woff"), url(/fonts/Panama-Regular.woff) format("ttf");
 }
 
 .bgH1 {
-    font-family: panamaRegular;
-    font-size: 24px;
-    margin-left: 10px;
+    font-family: PanamaRegular;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-left: 60px;
+    padding-top: 2px;
 }
 
 .artH1 {
-    font-family: panamaItalic;
-    font-size: 24px;
+    font-family: PanamaItalic;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 12px;
+    padding-left: 3px;
+    padding-top: 2px;
 }
 
 .artNumH1 {
-    font-family: panamaBold;
-    font-size: 24px;
-    margin-left: 10px;
+    font-family: PanamaItalic;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 12px;
+    padding-left: 5px;
+    padding-top: 2px;
 }
 
 body {
@@ -110,8 +122,9 @@ header::after {
     margin: 0;
     width: 100%;
     display: flex;
-    background: #d8d8d5;
-    box-shadow: 1px 1px 20px 0px black;
+    height: 30px;
+    background: #F1F1F1;
+    border-bottom: 1px solid #A0A0A0;
 }
 
 img.background {
