@@ -1,6 +1,6 @@
 import { arrayOfParts } from "./index"
 import { createElement } from "./htmlUtils"
-import { backgroundUrl, getImagesUrls, getUnusedPartsOfFullImage, randomFromRange, getModels, getRandomModel, compareArrays, getRandomFromArray, arrayOfCoordinates, } from "./utils"
+import { backgroundUrl, getImagesUrls, getUnusedPartsOfFullImage, randomFromRange, getModels, getRandomModel, compareArrays, getRandomFromArray, arrayOfCoordinates, getUnusedRandomPartsOfFullImage, } from "./utils"
 import { Project } from "./ProjectModel"
 const dataPath = "/images/"
 
@@ -13,32 +13,50 @@ export async function renderMainPage(rootElement: HTMLElement, header: HTMLEleme
 }
 
 async function singlePartImageRender(rootElement: HTMLElement, header: HTMLElement, arrayOfBackgroundUrls: Array<string>) {
-    const arrayOfProjectsModel: Array<Project> = await getImagesUrls(getModels)
-    let projectModel = getRandomModel(arrayOfProjectsModel)
-    const artefact: string = projectModel.projectNumber
-    const headerName = "header"
-    const singlePartUrl: string = dataPath + projectModel.partsOfImage[0]
-    const partOfImg = createPartImage(singlePartUrl, 0, 0)
-    partOfImg.addEventListener("click", () => {
-        rootElement.innerHTML = ""
-        multiPartImagesRender(rootElement, header, projectModel, arrayOfBackgroundUrls)
-    })
     updateBackground(rootElement, header, arrayOfBackgroundUrls)
+    const arrayOfProjectsModel: Array<Project> = await getImagesUrls(getModels)
+    const projectModel = getRandomModel(arrayOfProjectsModel)
+    const artefact: string = projectModel.projectNumber
+    let partsOfImage = projectModel.partsOfImage
+    let usedPartsOfImage: Array<string> = []
+    const singlePartUrl = getRandomFromArray(partsOfImage)
+    const headerName = "header"
+    const partOfImg = createPartImage(dataPath+singlePartUrl, 0, 0)
+    partOfImg.addEventListener("click", () => {
+        console.log(singlePartUrl)
+        console.log(usedPartsOfImage)
+        rootElement.innerHTML = ""
+        partsOfImage = partsOfImage.filter(partOfImg => partOfImg != singlePartUrl)
+        drawOtherPartOfImage(rootElement, header, projectModel, arrayOfBackgroundUrls, partsOfImage)
+    })
     createHeader(headerName, artefact)
     rootElement.append(partOfImg)
+} 
+function drawOtherPartOfImage(rootElement: HTMLElement, header: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>, partsOfImage: Array<string>) {
+    if (partsOfImage.length) {
+        updateBackground(rootElement, header, arrayOfBackgroundUrls)
+        const randomPartOfImage = getRandomFromArray(partsOfImage)
+        const partImg = createPartImage(dataPath + randomPartOfImage, 0, 0)
+        partImg.addEventListener("click", () => { 
+            partsOfImage = partsOfImage.filter(part => part != randomPartOfImage)
+            rootElement.innerHTML = ""
+            drawOtherPartOfImage(rootElement, header, projectModel, arrayOfBackgroundUrls, partsOfImage)
+        })
+        rootElement.appendChild(partImg)
+    } else {
+        fullImageRender(rootElement, header, projectModel, arrayOfBackgroundUrls)
+    }
 }
 
-const multiPartImagesRender = (rootElement: HTMLElement, header: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>) => {
+const multiPartImagesRender = (rootElement: HTMLElement, header: HTMLElement, projectModel: Project, partsOfImage: Array<string>, arrayOfBackgroundUrls: Array<string>) => {
     // updateBackground(rootElement, header, arrayOfBackgroundUrls)
     // const partsUrls: Array<string> = projectModel.partsOfImage.slice(1)
-    const partsUrls: Array<string> = projectModel.partsOfImage
-    console.log(partsUrls)
-    if (partsUrls) {
+    if (partsOfImage) {
         const minRadiusPx = 180
         const maxRadiusPx = 200
         const minAngleRad = 0
         const maxAngleRad = Math.PI * 2
-        partsUrls.forEach(partUrl => {
+        partsOfImage.forEach(partUrl => {
             partUrl = dataPath + partUrl
             const radiusPx = Math.round(randomFromRange(minRadiusPx, maxRadiusPx))
             const angleRad = randomFromRange(minAngleRad, maxAngleRad)
@@ -95,7 +113,6 @@ function drawImageFromTheSameCollection(rootElement: HTMLElement, header: HTMLEl
         const projectImg = createPartImage(dataPath + unusedProjects[0], 0, 0)
         projectImg.addEventListener("click", () => { 
             rootElement.innerHTML = ""
-            updateBackground(rootElement, header, arrayOfBackgroundUrls)
             drawImageFromTheSameCollection(rootElement, header, projectModel, arrayOfBackgroundUrls, usedProjects, sameProjects)
         })
         usedProjects.push(unusedProjects[0])
@@ -108,7 +125,6 @@ function drawImageFromTheSameCollection(rootElement: HTMLElement, header: HTMLEl
 
 const descriptionImageRender = (rootElement: HTMLElement, header: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>) => {
     rootElement.innerHTML = ""
-    updateBackground(rootElement, header, arrayOfBackgroundUrls)
     const projectDescription: string = dataPath + projectModel.projectDescription
     const descriptionImg = createPartImage(projectDescription, 0, 0)
     descriptionImg.setAttribute("class", "projectDescription")

@@ -8,7 +8,7 @@ import { Project } from "./ProjectModel"
 export const backgroundUrl: string = "http://127.0.0.1:3000/getbackground"
 export const fullUrl: string = "http://127.0.0.1:3000/getfull"
 export const loginHandler: string = "http://127.0.0.1:3000/login"
-export const backendCheckLoginUrl: string= "http://127.0.0.1:3000/check-login"
+export const backendCheckLoginUrl: string = "http://127.0.0.1:3000/check-login"
 export const postPartsUrl: string = "http://127.0.0.1:3000/sendarrayofparts"
 export const getPartsUrl: string = "http://127.0.0.1:3000/getArrayOfParts"
 export const sendProject: string = "http://127.0.0.1:3000/sendproject"
@@ -59,12 +59,12 @@ export function fetchRequest(method: string, url: string, body: object = {}): Pr
     return responsePromise
 }
 
-export const sendArrayOfParts = (url: string, body: Array<string>): Promise<any> =>{
+export const sendArrayOfParts = (url: string, body: Array<string>): Promise<any> => {
     const headers = {
         "Content-Type": "application/json"
     }
 
-    const response = fetch (url, {
+    const response = fetch(url, {
         method: "POST",
         body: JSON.stringify(body),
         headers: headers,
@@ -95,7 +95,7 @@ export const login = (login: string, password: string, loginHandler: string, log
 
 
 
-export const getUnusedPartsOfFullImage = (arrayOfUsedParts: Array<string>, arrayOfParts: Array<string>):Array<string> => {
+export const getUnusedPartsOfFullImage = (arrayOfUsedParts: Array<string>, arrayOfParts: Array<string>): Array<string> => {
     let partOfImage
     if (arrayOfUsedParts.length === 0) {
         partOfImage = arrayOfParts
@@ -103,11 +103,28 @@ export const getUnusedPartsOfFullImage = (arrayOfUsedParts: Array<string>, array
     } else {
         let result = arrayOfParts.filter((item, index) => item != arrayOfUsedParts[index])
         partOfImage = result
-        }
-        return partOfImage
     }
+    return partOfImage
+}
 
-export function fetGetRequest(url: string){
+export const getUnusedRandomPartsOfFullImage = (arrayOfUsedParts: Array<string>, arrayOfParts: Array<string>) => {
+    let partOfImage
+    if (arrayOfUsedParts.length === 0) {
+        partOfImage = arrayOfParts
+        return partOfImage
+    } else {
+        let result: Array<string> = arrayOfParts.filter((item) => {
+            for (let j = 0; j < arrayOfUsedParts.length; j++) {
+                item != arrayOfUsedParts[j]
+                return true
+            }
+        })
+        partOfImage = result
+    }
+    return partOfImage
+}
+
+export function fetGetRequest(url: string) {
     return fetch(url).then(response => {
         return response.json()
     })
@@ -119,17 +136,17 @@ export const compareArrays = (a: Array<string>, b: Array<string>) => a.length ==
 
 
 export const uploadImage = (file: FormData, url: string) => {
-  fetch(url, { 
-    method: 'POST',
-    credentials: "same-origin",
-    body: file 
-  }).then(
-    response => response.json() 
-  ).then(
-    success => console.log(success) 
-  ).catch(
-    error => console.log(error) 
-  );
+    fetch(url, {
+        method: 'POST',
+        credentials: "same-origin",
+        body: file
+    }).then(
+        response => response.json()
+    ).then(
+        success => console.log(success)
+    ).catch(
+        error => console.log(error)
+    );
 };
 
 export const uploadModel = (body: object) => {
@@ -137,15 +154,15 @@ export const uploadModel = (body: object) => {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
-        }, 
+        },
         credentials: "same-origin",
         body: JSON.stringify(body)
     }).then(
         response => response.json()
-        ).then(
-            success => console.log(success)
-        ).catch(
-            error => console.log(error)
-        )
+    ).then(
+        success => console.log(success)
+    ).catch(
+        error => console.log(error)
+    )
 }
 
