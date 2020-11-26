@@ -1,7 +1,9 @@
-import { renderAdminLoginPage, renderAdminPage } from "./adminPageView"
+import { renderAdminLoginPage, renderAdminPage, renderImagesControlPanel } from "./adminPageView"
 import { loginHandler, backendCheckLoginUrl, fetchRequest } from "./utils"
 import LoginPageModel from "./LoginPageModel"
 import { arrayOfParts } from "./index"
+// import './node_modules/bootstrap/dist/css/bootstrap.css'
+
 
 
 
@@ -23,6 +25,7 @@ window.addEventListener("load", async () => {
         const loginStatus = loginPageModelInstance.getLoginStatus()
         if (loginStatus === true) {
             renderAdminPage(rootElement, loginPageModelInstance)
+            renderImagesControlPanel(rootElement)
         } else {
             renderAdminLoginPage(rootElement, loginPageModelInstance, loginHandler, arrayOfParts)
         }

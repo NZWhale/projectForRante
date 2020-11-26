@@ -15,6 +15,7 @@ export async function renderMainPage(rootElement: HTMLElement, header: HTMLEleme
 async function singlePartImageRender(rootElement: HTMLElement, header: HTMLElement, arrayOfBackgroundUrls: Array<string>) {
     updateBackground(rootElement, header, arrayOfBackgroundUrls)
     const arrayOfProjectsModel: Array<Project> = await getImagesUrls(getModels)
+    console.log(arrayOfProjectsModel)
     const projectModel = getRandomModel(arrayOfProjectsModel)
     const artefact: string = projectModel.projectNumber
     let partsOfImage = projectModel.partsOfImage
