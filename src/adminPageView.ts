@@ -1,10 +1,8 @@
-import { create } from "domain"
 import { deleteCookie } from "./deleteCookies"
-import { createElement, createFormElement, createH3Element, createInputElement, createSubmitElement, } from "./htmlUtils"
+import { createElement, createFormElement, createH3Element, createInputElement, createSubmitElement, imageOnClick, } from "./htmlUtils"
 import LoginPageModel from "./LoginPageModel"
 import { Project } from "./ProjectModel"
-// import './node_modules/bootstrap/dist/css/bootstrap.css'
-import { fetchRequest, getImagesUrls, getModels, login, postPartsUrl, sendArrayOfParts, sendBackground, sendProject, uploadImage, uploadModel } from "./utils"
+import { getImagesUrls, getModels, login, sendBackground, sendProject, uploadImage, uploadModel } from "./utils"
 
 export const renderAdminLoginPage = (rootElement: HTMLElement, loginPageModelInstance: LoginPageModel, loginHandler: string, arrayOfParts: Array<Array<string>>) => {
     const loginDiv: HTMLElement = createElement("div", "loginDiv")
@@ -30,6 +28,7 @@ export const renderAdminLoginPage = (rootElement: HTMLElement, loginPageModelIns
     })
     passwordForm.setAttribute("type", "password")
     loginButton.setAttribute("type", "submit")
+    loginButton.setAttribute("class", "btn btn-outline-secondary")
     loginDiv.append(loginForm, passwordForm, loginButton)
     rootElement.append(loginDiv)
 
@@ -47,6 +46,7 @@ function getFilesNames(id: string): Array<string> {
 export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance: LoginPageModel) => {
     rootElement.innerHTML = ""
     const exitButton: HTMLElement = createElement("input", "exitButton")
+    exitButton.setAttribute("value",  "Exit")
     const projectForm = <HTMLFormElement> createFormElement("sendproject")
     projectForm.id = "projectForm"
     const backgroundForm = <HTMLFormElement> createFormElement("background")
@@ -56,6 +56,9 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     const projectsDiv: HTMLElement = createElement("div", "projectsDiv")
     const backgroundDiv: HTMLElement = createElement("div", "backgroundDiv")
     const projectNumberInput: HTMLElement = createElement("input", "projectNumberInput")
+    projectNumberInput.setAttribute("class", "input-group-text")
+    projectNumberInput.setAttribute("style", "margin-bottom: 12px")
+    projectNumberInput.setAttribute("placeholder", "Enter project number")
     const fullInput = <HTMLInputElement>createInputElement("fullInput")
     const partsInput = <HTMLInputElement>createInputElement("partsInput")
     const descriptionInput = <HTMLInputElement>createInputElement("descriptionInput")
@@ -63,6 +66,7 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     const backgroundInput = <HTMLInputElement>createInputElement("backgroundInput")
     const backgroundSubmit: HTMLElement = createSubmitElement("backgroundSubmit")
     const projectSubmit: HTMLElement = createSubmitElement("projectSubmit")
+    projectSubmit.setAttribute("class", "btn btn-outline-secondary")
     const numberH3: HTMLElement = createH3Element("numberH3", "Project number")
     const fullH3: HTMLElement = createH3Element("fullH3", "Full work")
     const partsH3: HTMLElement = createH3Element("partsH3", "Parts of work")
@@ -73,6 +77,8 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     backgroundInput.setAttribute("multiple", "true")
     projectsFromSameCollection.setAttribute("multiple", "true")
     exitButton.setAttribute("type", "button")
+    exitButton.setAttribute("class", "btn btn-outline-secondary")
+    exitButton.setAttribute("style", "height: 40px")
     exitButton.innerText = "exit"
     exitButton.addEventListener("click", () => {
         rootElement.innerHTML = ""
@@ -99,6 +105,7 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
         uploadImage(formData, sendProject)
         uploadModel(projectModel)
     })
+    backgroundSubmit.setAttribute("class", "btn btn-outline-secondary")
     backgroundSubmit.addEventListener("click", async () => {
         const form = <HTMLFormElement> document.getElementById("backgroundForm")
         const formData: FormData = new FormData(form)
@@ -109,8 +116,8 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     backgroundDiv.append(backgroundH3, backgroundInput, backgroundSubmit)
     projectForm.append(projectsDiv)
     backgroundForm.append(backgroundDiv)
-    mainDiv.append(projectForm, backgroundForm)
-    rootElement.append(mainDiv, exitButton)
+    mainDiv.append(projectForm, backgroundForm, exitButton)
+    rootElement.append(mainDiv)
 }
 
 export async function renderImagesControlPanel (rootElement: HTMLElement) {
@@ -121,19 +128,25 @@ export async function renderImagesControlPanel (rootElement: HTMLElement) {
     arrayOfProjectsModel.forEach((project, index) => {
         const div = createElement('div')
         div.setAttribute("class", "card")
+        const modal = imageOnClick(index, project.projectNumber)
         const secondDiv = createElement("div")
         secondDiv.setAttribute("id", `collapse${index}`)
-        secondDiv.setAttribute("class", "collapse show")
+        secondDiv.setAttribute("class", "collapse")
         secondDiv.setAttribute("aria-labelledby", `heading${index}`)
         secondDiv.setAttribute("data-parent", "#accordion")
         const accordionButton = createAccordionButton(index, project.projectNumber)
+        const fullImgDiv = createElement('div')
+        fullImgDiv.setAttribute("class", "border-bottom")
         const projectDiv = createElement('div')
-        const projectNumber = createElement('div', "projectNumber")
-        const partsDiv = createElement("div", "partsDiv")
-        const projectsFromSameCollectionDiv = createElement("div", "projectsDiv")
+        const projectNumber = createElement('div')
+        const partsDiv = createElement("div")
+        partsDiv.setAttribute("class", "border-bottom")
+        const projectsFromSameCollectionDiv = createElement("div")
+        projectsFromSameCollectionDiv.setAttribute("class", "border-bottom")
         const projectDescriptionDiv = createElement("div", "projectDescriptionDiv")
         projectNumber.innerHTML = project.projectNumber
-        createImageElement(project.fullImage, projectDiv, imagesPath)
+        createImageElement(project.fullImage, fullImgDiv, imagesPath)
+        projectDiv.append(fullImgDiv)
         project.partsOfImage.forEach((image) => {
         createImageElement(image, partsDiv, imagesPath)
         })
@@ -145,7 +158,7 @@ export async function renderImagesControlPanel (rootElement: HTMLElement) {
         createImageElement(project.projectDescription, projectDescriptionDiv, imagesPath)
         projectDiv.append(projectDescriptionDiv)
         secondDiv.append(projectDiv)
-        div.append(accordionButton, secondDiv)
+        div.append(accordionButton, secondDiv, modal)
         accordionDiv.append(div)
     })
     rootElement.append(accordionDiv)
@@ -157,6 +170,13 @@ const createAccordionButton = (index: number, projectNumber: string) => {
     div.setAttribute("class", "card-header")
     const h5 = createElement("h5")
     h5.setAttribute("class", "mb-0")
+    h5.setAttribute("style", "display: flex; flex-direction: row; justify-content: space-between")
+    const deleteButton = createElement("button")
+    deleteButton.setAttribute("class", 'btn btn-outline-secondary')
+    deleteButton.setAttribute("data-toggle", "modal")
+    deleteButton.setAttribute("value", 'Delete project')
+    deleteButton.innerHTML = "Delete project"
+    deleteButton.setAttribute("data-target", `#modal${index}`)
     const button = createElement("button")
     button.setAttribute("class", "btn btn-link")
     button.setAttribute("type", "button")
@@ -165,7 +185,7 @@ const createAccordionButton = (index: number, projectNumber: string) => {
     button.setAttribute("aria-expanded", "true")
     button.setAttribute("aria-controls", `collapse${index}`)
     button.innerHTML = projectNumber
-    h5.append(button)
+    h5.append(button, deleteButton)
     div.append(h5)
     return div
 }
