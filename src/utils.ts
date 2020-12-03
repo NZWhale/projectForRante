@@ -166,3 +166,22 @@ export const uploadModel = (body: object) => {
     )
 }
 
+export const deleteProject = (body: any) => {
+    fetch("http://127.0.0.1:3000/deleteproject", {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({"projectNumber": body})
+    })
+    .then(
+        response => {
+            console.log(response.status)
+            if(response.status === 200) {
+                window.location.reload()
+            }
+        }
+    ).catch(
+        error => console.log(error)
+    )
+}

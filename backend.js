@@ -164,5 +164,45 @@ app.post('/check-login', (req, res) => {
     })
     // -------------------------------------------------
 
+// Handler for deleting project
+app.post('/deleteproject', (req, res) => {
+    const arrayOfAllModels = JSON.parse(fs.readFileSync(projectsModel), "utf-8")
+    const projectNumber = req.body.projectNumber
+    const projectForDelete = arrayOfAllModels.find(model => model.projectNumber === projectNumber)
+    fs.unlink(`${imagesPath}/${projectForDelete.fullImage}`, (err) => {
+        if (err) throw err;
+        console.log(`${imagesPath}/${projectForDelete.fullImage} was deleted`);
+      });
+    projectForDelete.partsOfImage.forEach(image => {
+    fs.unlink(`${imagesPath}/${image}`, (err) => {
+        if (err) throw err;
+        console.log(`${imagesPath}/${image} was deleted`);
+      });
+    })
+    fs.unlink(`${imagesPath}/${projectForDelete.projectDescription}`, (err) => {
+        if (err) throw err;
+        console.log(`${imagesPath}/${projectForDelete.projectDescription} was deleted`);
+      });
+    projectForDelete.projectsFromSameCollection.forEach(image => {
+    fs.unlink(`${imagesPath}/${image}`, (err) => {
+        if (err) throw err;
+        console.log(`${imagesPath}/${image} was deleted`);
+      });
+    })
+    let arrayWithoutDeletedModel = arrayOfAllModels.filter(model => model.projectNumber !== projectForDelete.projectNumber)
+    if(arrayOfAllModels == projectForDelete) {
+    fs.writeFile("data/projectsModel.json", "[]", (err) => {
+        if (err) throw err
+        console.log("model delete successful")
+        res.status(200).send()
+    })
+}else{
+    fs.writeFile("data/projectsModel.json", JSON.stringify(arrayWithoutDeletedModel), (err) => {
+        if (err) throw err
+        console.log("model delete successful")
+        res.status(200).send()
+    })
+}
+})
 
 app.listen(port)

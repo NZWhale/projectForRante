@@ -2,7 +2,7 @@ import { deleteCookie } from "./deleteCookies"
 import { createElement, createFormElement, createH3Element, createInputElement, createSubmitElement, imageOnClick, } from "./htmlUtils"
 import LoginPageModel from "./LoginPageModel"
 import { Project } from "./ProjectModel"
-import { getImagesUrls, getModels, login, sendBackground, sendProject, uploadImage, uploadModel } from "./utils"
+import { deleteProject, getImagesUrls, getModels, login, sendBackground, sendProject, uploadImage, uploadModel } from "./utils"
 
 export const renderAdminLoginPage = (rootElement: HTMLElement, loginPageModelInstance: LoginPageModel, loginHandler: string, arrayOfParts: Array<Array<string>>) => {
     const loginDiv: HTMLElement = createElement("div", "loginDiv")

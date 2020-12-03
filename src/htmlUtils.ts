@@ -1,3 +1,5 @@
+import { deleteProject } from "./utils"
+
 export const createElement = (type: string, id?: string): any => {
     const element = document.createElement(type)
     if (id) {
@@ -77,7 +79,10 @@ export const imageOnClick = (index: number, projectNumber: string) => {
     const saveButton = createElement('button')
     saveButton.setAttribute('type', 'button')
     saveButton.setAttribute('class', 'btn btn-primary')
-    saveButton.setAttribute('value', 'Save')
+    saveButton.setAttribute('value', 'Delete')
+    saveButton.addEventListener('click', () => {
+        deleteProject(projectNumber)
+    })
     saveButton.innerHTML = "Delete"
     const span = createElement('span')
     span.setAttribute('aria-hidden', 'true')
