@@ -16,7 +16,11 @@ export const createFormElement = (action: string): HTMLElement => {
     return form
 }
 
-export const createInputElement = (id: string): HTMLElement => {
+interface HTMLInputEvent extends Event {
+    target: HTMLInputElement & EventTarget;
+}
+
+export const createInputElement = (id: string, multiple: boolean = false): HTMLElement => {
     const div = createElement("div")
     div.setAttribute("style", "margin-bottom: 12px")
     const input = createElement("input")
@@ -24,6 +28,7 @@ export const createInputElement = (id: string): HTMLElement => {
     div.setAttribute("class", "custom-file")
     input.setAttribute("class", "custom-file-input") 
     input.setAttribute("id", "customFile")
+    input.setAttribute("multiple", multiple)
     label.setAttribute("class", "custom-file-label") 
     label.setAttribute("for", "customFile")
     label.innerHTML = "Choose a file"
@@ -31,6 +36,16 @@ export const createInputElement = (id: string): HTMLElement => {
     input.type = "file"
     input.name = "full"
     div.append(input, label)
+    input.addEventListener('change', function(e: any){
+        const file: any = document.getElementById(id)
+        const fileName: any = []
+        const files = file.files
+        for (let i = 0; i < files.length; i++){
+            fileName.push(files[i].name)
+        }
+        var nextSibling = e.target.nextElementSibling
+        nextSibling.innerText = fileName
+      })
     return div
 }
 
