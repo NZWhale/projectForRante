@@ -36,16 +36,16 @@ export const createInputElement = (id: string, multiple: boolean = false): HTMLE
     input.type = "file"
     input.name = "full"
     div.append(input, label)
-    input.addEventListener('change', function(e: any){
-        const file: any = document.getElementById(id)
-        const fileName: any = []
-        const files = file.files
-        for (let i = 0; i < files.length; i++){
-            fileName.push(files[i].name)
-        }
-        var nextSibling = e.target.nextElementSibling
-        nextSibling.innerText = fileName
-      })
+    // input.addEventListener('change', function(e: any){
+    //     const file: any = document.getElementById(id)
+    //     const fileName: any = []
+    //     const files = file.files
+    //     for (let i = 0; i < files.length; i++){
+    //         fileName.push(files[i].name)
+    //     }
+    //     const nextSibling = e.target.nextElementSibling
+    //     nextSibling.innerText = fileName
+    //   })
     return div
 }
 

@@ -1,7 +1,12 @@
 export interface Project {
     projectNumber: string,
-    fullImage: string,
-    partsOfImage: Array<string>
+    fullImage: PartOfWork,
+    partsOfImage: Array<PartOfWork>
     projectDescription?: string,
-    projectsFromSameCollection?: Array<string>
+    projectsFromSameCollection?: Array<PartOfWork>
+}
+
+export interface PartOfWork {
+    name: string,
+    artefact: string
 }

@@ -3,7 +3,7 @@ import { url } from "inspector"
 import { arrayOfParts } from "."
 import { renderAdminPage } from "./adminPageView"
 import LoginPageModel from "./LoginPageModel"
-import { Project } from "./ProjectModel"
+import { PartOfWork, Project } from "./ProjectModel"
 
 export const backgroundUrl: string = "http://127.0.0.1:3000/getbackground"
 export const fullUrl: string = "http://127.0.0.1:3000/getfull"
@@ -22,7 +22,7 @@ export const randomFromRange = (min: number, max: number) => {
 }
 
 
-export const getRandomFromArray = (array: any): string => {
+export const getRandomFromArray = (array: any): any => {
     const randomNumber = Math.floor(Math.random() * array.length)
     const randomLink = array[randomNumber]
     return randomLink
@@ -95,7 +95,7 @@ export const login = (login: string, password: string, loginHandler: string, log
 
 
 
-export const getUnusedPartsOfFullImage = (arrayOfUsedParts: Array<string>, arrayOfParts: Array<string>): Array<string> => {
+export const getUnusedPartsOfFullImage = (arrayOfUsedParts: Array<PartOfWork>, arrayOfParts: Array<PartOfWork>): Array<PartOfWork> => {
     let partOfImage
     if (arrayOfUsedParts.length === 0) {
         partOfImage = arrayOfParts
@@ -130,7 +130,7 @@ export function fetGetRequest(url: string) {
     })
 }
 
-export const compareArrays = (a: Array<string>, b: Array<string>) => a.length === b.length && a.every((n, i) => n === b[i])
+export const compareArrays = (a: Array<PartOfWork>, b: Array<PartOfWork>) => a.length === b.length && a.every((n, i) => n === b[i])
 
 
 

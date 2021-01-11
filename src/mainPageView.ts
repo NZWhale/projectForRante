@@ -1,7 +1,7 @@
 import { arrayOfParts } from "./index"
 import { createElement } from "./htmlUtils"
 import { backgroundUrl, getImagesUrls, getUnusedPartsOfFullImage, randomFromRange, getModels, getRandomModel, compareArrays, getRandomFromArray, arrayOfCoordinates, getUnusedRandomPartsOfFullImage, } from "./utils"
-import { Project } from "./ProjectModel"
+import { PartOfWork, Project } from "./ProjectModel"
 const dataPath = "/images/"
 
 export async function renderMainPage(rootElement: HTMLElement,) {
@@ -21,32 +21,31 @@ async function singlePartImageRender(rootElement: HTMLElement, arrayOfBackground
     const singlePartUrl = getRandomFromArray(partsOfImage)
     const artefact: string = projectModel.projectNumber
     const headerArtefact = document.getElementById("artefact")
-    headerArtefact.innerHTML = artefact
-    // const headerName = "header"
-    const partOfImg = createPartImage(dataPath+singlePartUrl, 0, 0)
+    headerArtefact.innerHTML = singlePartUrl.artefact
+    const partOfImg = createPartImage(dataPath+singlePartUrl.name, 0, 0)
     partOfImg.addEventListener("click", () => {
-        console.log(singlePartUrl)
-        console.log(usedPartsOfImage)
+        // console.log(singlePartUrl)
+        // console.log(usedPartsOfImage)
         rootElement.innerHTML = ""
-        partsOfImage = partsOfImage.filter(partOfImg => partOfImg != singlePartUrl)
-        drawOtherPartOfImage(rootElement, projectModel, arrayOfBackgroundUrls, partsOfImage)
+        partsOfImage = partsOfImage.filter(partOfImg => partOfImg.name != singlePartUrl.name)
+        drawOtherPartOfImage(rootElement, projectModel, arrayOfBackgroundUrls, partsOfImage, headerArtefact)
     })
-    // createHeader(headerName, artefact)
     rootElement.append(partOfImg)
 } 
-function drawOtherPartOfImage(rootElement: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>, partsOfImage: Array<string>) {
+function drawOtherPartOfImage(rootElement: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>, partsOfImage: Array<PartOfWork>, headerArtefact: HTMLElement) {
     if (partsOfImage.length) {
         updateBackground(rootElement, arrayOfBackgroundUrls)
         const randomPartOfImage = getRandomFromArray(partsOfImage)
-        const partImg = createPartImage(dataPath + randomPartOfImage, 0, 0)
+        headerArtefact.innerHTML = randomPartOfImage.artefact
+        const partImg = createPartImage(dataPath + randomPartOfImage.name, 0, 0)
         partImg.addEventListener("click", () => { 
             partsOfImage = partsOfImage.filter(part => part != randomPartOfImage)
             rootElement.innerHTML = ""
-            drawOtherPartOfImage(rootElement, projectModel, arrayOfBackgroundUrls, partsOfImage)
+            drawOtherPartOfImage(rootElement, projectModel, arrayOfBackgroundUrls, partsOfImage, headerArtefact)
         })
         rootElement.appendChild(partImg)
     } else {
-        fullImageRender(rootElement, projectModel, arrayOfBackgroundUrls)
+        fullImageRender(rootElement, projectModel, arrayOfBackgroundUrls, headerArtefact)
     }
 }
 
@@ -64,27 +63,28 @@ const multiPartImagesRender = (rootElement: HTMLElement, projectModel: Project, 
             const angleRad = randomFromRange(minAngleRad, maxAngleRad)
             const partImg = createPartImage(partUrl, radiusPx, angleRad)
             partImg.addEventListener("click", () => {
-                fullImageRender(rootElement, projectModel, arrayOfBackgroundUrls)
+                // fullImageRender(rootElement, projectModel, arrayOfBackgroundUrls, headerArtefact)
             })
             rootElement.appendChild(partImg)
         })
     } else {
-        fullImageRender(rootElement, projectModel, arrayOfBackgroundUrls)
+        // fullImageRender(rootElement, projectModel, arrayOfBackgroundUrls)
     }
 
 }
 
 
-const fullImageRender = (rootElement: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>) => {
+const fullImageRender = (rootElement: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>, headerArtefact: HTMLElement) => {
     rootElement.innerHTML = ""
     updateBackground(rootElement, arrayOfBackgroundUrls)
-    const fullImageUrl: string = dataPath + projectModel.fullImage
+    const fullImageUrl: string = dataPath + projectModel.fullImage.name
+    headerArtefact.innerHTML = projectModel.fullImage.artefact
     const fullImg = createPartImage(fullImageUrl, 0, 0)
     fullImg.setAttribute("class", "fullImg")
     fullImg.addEventListener("click", () => {
         if (projectModel.projectsFromSameCollection) {
             rootElement.innerHTML = ""
-            sameProjectsImagesRender(rootElement, projectModel, arrayOfBackgroundUrls)
+            sameProjectsImagesRender(rootElement, projectModel, arrayOfBackgroundUrls, headerArtefact)
         } else if (projectModel.projectDescription) {
             descriptionImageRender(rootElement, projectModel, arrayOfBackgroundUrls)
         } else {
@@ -94,28 +94,30 @@ const fullImageRender = (rootElement: HTMLElement, projectModel: Project, arrayO
     rootElement.appendChild(fullImg)
 }
 
-const sameProjectsImagesRender = (rootElement: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>) => {
+const sameProjectsImagesRender = (rootElement: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>, headerArtefact: HTMLElement) => {
     updateBackground(rootElement, arrayOfBackgroundUrls)
-    const sameProjects: Array<string> = projectModel.projectsFromSameCollection
-    let usedProjects: Array<string> = []
+    const sameProjects: Array<PartOfWork> = projectModel.projectsFromSameCollection
+    let usedProjects: Array<PartOfWork> = []
     const projectUrl = sameProjects[0]
+    headerArtefact.innerHTML = projectUrl.artefact
     usedProjects.push(projectUrl)
-    const projectImg = createPartImage(dataPath + projectUrl, 0, 0)
+    const projectImg = createPartImage(dataPath + projectUrl.name, 0, 0)
     projectImg.addEventListener('click', () => {
         rootElement.innerHTML = ""
-        drawImageFromTheSameCollection(rootElement, projectModel, arrayOfBackgroundUrls, usedProjects, sameProjects)
+        drawImageFromTheSameCollection(rootElement, projectModel, arrayOfBackgroundUrls, usedProjects, sameProjects, headerArtefact)
     })
     rootElement.appendChild(projectImg)
 }
 
-function drawImageFromTheSameCollection(rootElement: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>, usedProjects: Array<string>, sameProjects: Array<string>) {
+function drawImageFromTheSameCollection(rootElement: HTMLElement, projectModel: Project, arrayOfBackgroundUrls: Array<string>, usedProjects: Array<PartOfWork>, sameProjects: Array<PartOfWork>, headerArtefact: HTMLElement) {
     if (!compareArrays(usedProjects, sameProjects)) {
         updateBackground(rootElement, arrayOfBackgroundUrls)
         const unusedProjects = getUnusedPartsOfFullImage(usedProjects, sameProjects)
-        const projectImg = createPartImage(dataPath + unusedProjects[0], 0, 0)
+        const projectImg = createPartImage(dataPath + unusedProjects[0].name, 0, 0)
+        headerArtefact.innerHTML = unusedProjects[0].artefact
         projectImg.addEventListener("click", () => { 
             rootElement.innerHTML = ""
-            drawImageFromTheSameCollection(rootElement, projectModel, arrayOfBackgroundUrls, usedProjects, sameProjects)
+            drawImageFromTheSameCollection(rootElement, projectModel, arrayOfBackgroundUrls, usedProjects, sameProjects, headerArtefact)
         })
         usedProjects.push(unusedProjects[0])
         rootElement.appendChild(projectImg)

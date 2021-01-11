@@ -59,10 +59,68 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     projectNumberInput.setAttribute("class", "input-group-text")
     projectNumberInput.setAttribute("style", "margin-bottom: 12px")
     projectNumberInput.setAttribute("placeholder", "Enter project number")
+    let fullArtefact: any
+    let partsArtefacts: Array<string> = []
+    let projectsFromSameCollectionArtefacts: Array<string> = []
+    const button = createElement("button")
+    button.addEventListener("click", () => {
+        console.log(fullArtefact)
+    })
     const fullInput = <HTMLInputElement>createInputElement("fullInput")
+    fullInput.addEventListener('change', function(e: any){
+        const file: any = document.getElementById("fullInput")
+        const fileName: any = []
+        const files = file.files
+        for (let i = 0; i < files.length; i++){
+            fileName.push(files[i].name)
+        }
+        fileName.forEach((file: string) => {
+           fullArtefact = prompt(`Enter artefact for ${file}`)
+        })
+        const nextSibling = e.target.nextElementSibling
+        nextSibling.innerText = fileName
+      })
     const partsInput = <HTMLInputElement>createInputElement("partsInput", true)
+    partsInput.addEventListener('change', function(e: any){
+        const file: any = document.getElementById("partsInput")
+        const fileName: any = []
+        const files = file.files
+        for (let i = 0; i < files.length; i++){
+            fileName.push(files[i].name)
+        }
+        fileName.forEach((file: string) => {
+           let partArtefact = prompt(`Enter artefact for ${file}`)
+           partsArtefacts.push(partArtefact)
+        })
+        const nextSibling = e.target.nextElementSibling
+        nextSibling.innerText = fileName
+      })
     const descriptionInput = <HTMLInputElement>createInputElement("descriptionInput")
+    descriptionInput.addEventListener('change', function(e: any){
+        const file: any = document.getElementById("descriptionInput")
+        const fileName: any = []
+        const files = file.files
+        for (let i = 0; i < files.length; i++){
+            fileName.push(files[i].name)
+        }
+        const nextSibling = e.target.nextElementSibling
+        nextSibling.innerText = fileName
+      })
     const projectsFromSameCollection = <HTMLInputElement>createInputElement("projectsFromSameCollection", true)
+    projectsFromSameCollection.addEventListener('change', function(e: any){
+        const file: any = document.getElementById("projectsFromSameCollection")
+        const fileName: any = []
+        const files = file.files
+        for (let i = 0; i < files.length; i++){
+            fileName.push(files[i].name)
+        }
+        fileName.forEach((file: string) => {
+           let projectsFromSameCollectionArtefact = prompt(`Enter artefact for ${file}`)
+           projectsFromSameCollectionArtefacts.push(projectsFromSameCollectionArtefact)
+        })
+        const nextSibling = e.target.nextElementSibling
+        nextSibling.innerText = fileName
+      })
     const backgroundInput = <HTMLInputElement>createInputElement("backgroundInput", true)
     const backgroundSubmit: HTMLElement = createSubmitElement("backgroundSubmit")
     const projectSubmit: HTMLElement = createSubmitElement("projectSubmit")
@@ -85,17 +143,35 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     projectSubmit.addEventListener("click", async () => {
         const fullFileName = getFilesNames("fullInput")
         const partsOfFilesNames = getFilesNames("partsInput")
+        const partsOfWork = partsOfFilesNames.map((part: any, index) => {
+           part = {
+                name: part,
+                artefact: partsArtefacts[index]
+            }
+            return part
+        })
         let projectDescription = getFilesNames("descriptionInput")
         let projectsFromSameCollection = getFilesNames("projectsFromSameCollection")
         const projectNumberInput = <HTMLInputElement>document.getElementById("projectNumberInput")
         const projectNumber: string = projectNumberInput.value
         const projectModel: Project = {
             projectNumber: projectNumber,
-            fullImage: fullFileName[0],
-            partsOfImage: partsOfFilesNames,
+            fullImage: {
+                name: fullFileName[0],
+                artefact: fullArtefact
+            },
+            partsOfImage: partsOfWork,
         }
         if(projectDescription){projectModel.projectDescription = projectDescription[0]}
-        if(projectsFromSameCollection){projectModel.projectsFromSameCollection = projectsFromSameCollection}
+        if(projectsFromSameCollection){
+            const sameProjects = projectsFromSameCollection.map((project: any, index) => {
+                project = {
+                    name: project,
+                    artefact: projectsFromSameCollectionArtefacts[index]
+                }
+                return project
+            })
+            projectModel.projectsFromSameCollection = sameProjects}
         console.log(projectModel)
         const form = <HTMLFormElement> document.getElementById("projectForm")
         const formData: FormData = new FormData(form)
@@ -113,7 +189,7 @@ export const renderAdminPage = (rootElement: HTMLElement, loginPageModelInstance
     backgroundDiv.append(backgroundH3, backgroundInput, backgroundSubmit)
     projectForm.append(projectsDiv)
     backgroundForm.append(backgroundDiv)
-    mainDiv.append(projectForm, backgroundForm, exitButton)
+    mainDiv.append(projectForm, backgroundForm, exitButton, button)
     rootElement.append(mainDiv)
 }
 
@@ -142,14 +218,14 @@ export async function renderImagesControlPanel (rootElement: HTMLElement) {
         projectsFromSameCollectionDiv.setAttribute("class", "border-bottom")
         const projectDescriptionDiv = createElement("div", "projectDescriptionDiv")
         projectNumber.innerHTML = project.projectNumber
-        createImageElement(project.fullImage, fullImgDiv, imagesPath)
+        createImageElement(project.fullImage.name, fullImgDiv, imagesPath)
         projectDiv.append(fullImgDiv)
         project.partsOfImage.forEach((image) => {
-        createImageElement(image, partsDiv, imagesPath)
+        createImageElement(image.name, partsDiv, imagesPath)
         })
         projectDiv.append(partsDiv)
         project.projectsFromSameCollection.forEach(project => {
-        createImageElement(project, projectsFromSameCollectionDiv, imagesPath)
+        createImageElement(project.name, projectsFromSameCollectionDiv, imagesPath)
         })
         projectDiv.append(projectsFromSameCollectionDiv)
         createImageElement(project.projectDescription, projectDescriptionDiv, imagesPath)
